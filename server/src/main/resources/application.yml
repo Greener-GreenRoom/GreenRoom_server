@@ -3,5 +3,7 @@ server:
 spring:
   profiles:
     active: local
+    include: oauth
 
 temp.filePath: src/main/resources/
+

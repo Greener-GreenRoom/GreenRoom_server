@@ -2,6 +2,7 @@ package com.greenroom.server.api.domain.user.entity;
 
 import com.greenroom.server.api.domain.common.BaseTime;
 import com.greenroom.server.api.domain.greenroom.entity.Grade;
+import com.greenroom.server.api.domain.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,12 +30,15 @@ public class User extends BaseTime {
 
     private String profileUrl;
 
+    @Enumerated(EnumType.STRING)
+    public Role role;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private Grade grade;
 
     @Builder
-    public User(String name,String email,String password,String profileUrl,Grade grade) {
+    public User(String name,String email,String password,String profileUrl,Grade grade,Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -42,5 +46,6 @@ public class User extends BaseTime {
         this.totalSeed = 0;
         this.weeklySeed = 0;
         this.grade = grade;
+        this.role = Role.GENERAL;
     }
 }

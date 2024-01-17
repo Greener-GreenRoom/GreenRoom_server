@@ -1,0 +1,12 @@
+
+## 추후 환경마다 oauth 를 분리해야 함.
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 391375534343-a1cf5da6clgup5is688fv6jec1loeue5.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile,email
