@@ -13,8 +13,32 @@ spring:
     username: GR_Dev_Admin
     password: GreenRoom!32
     driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+      auto: false
+    credentials:
+      access-key: AKIA5KTK6V24YGCLGFWH
+      secret-key: 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
+aws:
+  s3:
+    bucket: gr-dev-s3
+    path:
+      root: https://gr-dev-s3.s3.ap-northeast-2.amazonaws.com/
+      plant: dev/plant
+  cdn:
+    path:
+      root: https://d3pfhbnnnj15dk.cloudfront.net/
+      plant: dev/plant
+
 
 logging.level:
   #  org.hibernate.SQL: debug
   org.hibernate.type: trace
+
 
