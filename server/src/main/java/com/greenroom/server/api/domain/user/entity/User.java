@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @Entity
 @Getter
-@ToString
+//@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTime {
 
@@ -30,6 +30,14 @@ public class User extends BaseTime {
 
     private String profileUrl;
 
+    private String accessToken;
+
+    private String refreshToken;
+
+    private LocalDateTime accessTokenExpirationTime;
+
+    private LocalDateTime refreshTokenExpirationTime;
+
     @Enumerated(EnumType.STRING)
     public Role role;
 
@@ -46,6 +54,18 @@ public class User extends BaseTime {
         this.totalSeed = 0;
         this.weeklySeed = 0;
         this.grade = grade;
-        this.role = Role.GENERAL;
+        this.role = role;
+    }
+
+    public User setRefreshToken(String refreshToken,LocalDateTime refreshTokenExpirationTime){
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpirationTime = refreshTokenExpirationTime;
+        return this;
+    }
+
+    public User setAccessToken(String accessToken,LocalDateTime accessTokenExpirationTime){
+        this.accessToken = accessToken;
+        this.accessTokenExpirationTime = accessTokenExpirationTime;
+        return this;
     }
 }

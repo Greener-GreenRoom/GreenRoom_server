@@ -38,7 +38,8 @@ aws:
 
 
 logging.level:
+  org.hibernate.type: info
   #  org.hibernate.SQL: debug
-  org.hibernate.type: trace
+#  org.hibernate.type: trace
 
 

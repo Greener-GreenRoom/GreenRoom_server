@@ -10,3 +10,9 @@ spring:
             client-id: 391375534343-a1cf5da6clgup5is688fv6jec1loeue5.apps.googleusercontent.com
             client-secret: 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
             scope: profile,email
+
+
+jwt:
+  header: Authorization
+  secret-key: R3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29tR3JlZW5Sb29t
+  token-validity-in-seconds: 86400
