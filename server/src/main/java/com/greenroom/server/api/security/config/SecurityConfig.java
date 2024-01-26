@@ -51,6 +51,7 @@ public class SecurityConfig {
                                         .requestMatchers(new MvcRequestMatcher(introspector,"/login/**")).permitAll()
                                         .requestMatchers(new MvcRequestMatcher(introspector,"/api/user/signup")).permitAll()
                                         .requestMatchers(new MvcRequestMatcher(introspector,"/api/authenticate")).permitAll()
+                                        .requestMatchers(new MvcRequestMatcher(introspector,"/gardening-data")).permitAll() /// plant data 주입 api 추가
 //                                .requestMatchers("/api/**").hasRole(Role.USER.name())
                                         .anyRequest().authenticated()
                 )

@@ -36,6 +36,9 @@ aws:
       root: https://d3pfhbnnnj15dk.cloudfront.net/
       plant: dev/plant
 
+###농사로 open api key
+gardening-data:
+  api-key: 20240108ANK2BVVRSWBUJSCC6GOYQ
 
 logging.level:
   org.hibernate.type: info
