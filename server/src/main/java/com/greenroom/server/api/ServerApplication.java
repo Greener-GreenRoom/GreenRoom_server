@@ -12,17 +12,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing
 @RequiredArgsConstructor
-@Slf4j
 public class ServerApplication {
 	private final UserRepository userRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
-	}
-
-	@EventListener(ApplicationReadyEvent.class)
-	public void countAllUsers(){
-		log.info("user Count => {}",userRepository.findAll().size());
-//		System.out.println(userRepository.findAll());
 	}
 }

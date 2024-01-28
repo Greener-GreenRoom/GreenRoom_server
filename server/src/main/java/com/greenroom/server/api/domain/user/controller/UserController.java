@@ -19,13 +19,11 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserDto> signup(@RequestBody UserDto userDto){
-        log.info("sign up ... userDto ::{}",userDto);
         return ResponseEntity.ok(UserDto.toDto(userService.signUp(userDto)));
     }
 
     @GetMapping("/info")
     public String printMyInfo(@AuthenticationPrincipal User user){
-        log.info("currentUser :: {}",user.getUsername());
         return user.getUsername();
     }
 }

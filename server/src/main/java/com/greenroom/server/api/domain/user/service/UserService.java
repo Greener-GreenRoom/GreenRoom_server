@@ -24,14 +24,7 @@ public class UserService{
         if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
             throw new UserAlreadyExist(ResponseCodeEnum.ALREADY_EXIST,"이미 존재하는 유저 입니다.");
         }
-
-        return userRepository.save(
-                User.builder()
-                        .name(userDto.getName())
-                        .password(passwordEncoder.encode(userDto.getPassword()))
-                        .email(userDto.getEmail())
-                        .role(Role.GENERAL)
-                        .build()
-        );
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userRepository.save(User.createUser(userDto));
     }
 }
