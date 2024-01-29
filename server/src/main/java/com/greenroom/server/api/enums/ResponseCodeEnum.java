@@ -9,7 +9,8 @@ public enum ResponseCodeEnum {
 	SUCCESS(0x0000, "success"),
 	FAILED(-0x0001, "failed"),
 
-	RESULT_NOT_FOUND(-0x1001, "not found")
+	RESULT_NOT_FOUND(-0x1001, "not found"),
+	ALREADY_EXIST(-0x2001, "already exists")
 	;
 	private final int code;
 
