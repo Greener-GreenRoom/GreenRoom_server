@@ -1,6 +1,7 @@
 package com.greenroom.server.api.security.service;
 
 
+import com.greenroom.server.api.domain.user.repository.GradeRepository;
 import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class GoogleOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
+    private final GradeRepository gradeRepository;
     private final HttpSession httpSession;
     private final PasswordEncoder passwordEncoder;
 
@@ -64,7 +66,7 @@ public class GoogleOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if(findUser.isPresent()){
             return userRepository.save(findUser.get().updateUser(attribute));
         }
-        User user = User.createUser(attribute);
+        User user = User.createUser(attribute,gradeRepository.findById(1L).orElse(null));
         user.setDefaultPasswordOnOAuth2User(passwordEncoder.encode("password"));
         return userRepository.save(user);
     }

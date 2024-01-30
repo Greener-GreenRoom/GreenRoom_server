@@ -4,6 +4,7 @@ import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
+import com.greenroom.server.api.domain.user.repository.GradeRepository;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.enums.ResponseCodeEnum;
 import jakarta.transaction.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserService{
 
     private final UserRepository userRepository;
+    private final GradeRepository gradeRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -25,6 +27,6 @@ public class UserService{
             throw new UserAlreadyExist(ResponseCodeEnum.ALREADY_EXIST,"이미 존재하는 유저 입니다.");
         }
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        return userRepository.save(User.createUser(userDto));
+        return userRepository.save(User.createUser(userDto,gradeRepository.findById(1L).orElse(null)));
     }
 }

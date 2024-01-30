@@ -4,6 +4,10 @@ spring:
   profiles:
     active: local
     include: oauth
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: com.greenroom.server.api.utils.JpaCustomPhysicalNamingStrategy
 
 temp.filePath: src/main/resources/
 
