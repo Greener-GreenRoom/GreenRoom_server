@@ -10,7 +10,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "users")
+@Table(name = "`USERS`")
 @Entity
 @Getter
 //@ToString
@@ -43,7 +43,7 @@ public class User extends BaseTime {
     @Enumerated(EnumType.STRING)
     public Role role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private Grade grade;
 
@@ -71,18 +71,20 @@ public class User extends BaseTime {
         return this;
     }
 
-    public static User createUser(UserDto userDto){
+    public static User createUser(UserDto userDto,Grade grade){
         return User.builder()
                 .name(userDto.getName())
                 .password(userDto.getPassword())
                 .email(userDto.getEmail())
+                .grade(grade)
                 .role(Role.GENERAL)
                 .build();
     }
-    public static User createUser(GoogleOAuthAttribute attribute){
+    public static User createUser(GoogleOAuthAttribute attribute,Grade grade){
         return User.builder()
                 .name(attribute.getName())
                 .email(attribute.getEmail())
+                .grade(grade)
                 .role(Role.GENERAL)
                 .build();
     }
