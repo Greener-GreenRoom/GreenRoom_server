@@ -34,11 +34,9 @@ public class SecurityConfig {
     private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-//    private final JWTFilter jwtFilter;
-//    private final GoogleOAuth2UserDetailService googleOAuth2UserDetailService;
     private final TokenProvider tokenProvider;
     private static final String[] ANONYMOUS_MATCHERS = {
-            "/", "/login/**", "/api/user/signup","/api/authenticate","/api/authenticate/**"
+            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**"
     };
 
     @Bean
@@ -49,16 +47,12 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorizeRequests) ->
                                 authorizeRequests
-//                                        .requestMatchers(new MvcRequestMatcher(introspector,"/login/oauth2/google")).permitAll()
-//                                        .requestMatchers(new MvcRequestMatcher(introspector,"/")).permitAll()
-//                                .requestMatchers("/api/**").hasRole(Role.USER.name())
                                         .requestMatchers(
                                                 Stream.of(ANONYMOUS_MATCHERS)
                                                         .map(uri->new MvcRequestMatcher(introspector,uri))
                                                         .toArray(MvcRequestMatcher[]::new)
-                                        ).anonymous()
-                                        .requestMatchers(new MvcRequestMatcher(introspector,"/login/oauth2/code/google")).permitAll()
-                                        .anyRequest().authenticated()
+                                        ).permitAll()
+                                       .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
@@ -68,11 +62,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement)->
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-//                .addFilterAfter(jwtFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTFilter(tokenProvider),UsernamePasswordAuthenticationFilter.class)
-//                .logout((logoutConfig) ->
-//                        logoutConfig.logoutSuccessUrl("/")
-//                )
                 .oauth2Login((oauthConfig) ->
                         oauthConfig.userInfoEndpoint((userInfoEndpointConfig) ->
                                 userInfoEndpointConfig.userService(googleOAuth2UserService)
