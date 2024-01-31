@@ -51,7 +51,7 @@ public class SecurityConfig {
                                                 Stream.of(ANONYMOUS_MATCHERS)
                                                         .map(uri->new MvcRequestMatcher(introspector,uri))
                                                         .toArray(MvcRequestMatcher[]::new)
-                                        ).anonymous()
+                                        ).permitAll()
                                        .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionHandling) ->
