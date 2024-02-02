@@ -9,5 +9,10 @@ spring:
       naming:
         physical-strategy: com.greenroom.server.api.utils.JpaCustomPhysicalNamingStrategy
 
+###농사로 open api key
+gardening-data:
+  api-key: 20240108ANK2BVVRSWBUJSCC6GOYQ
+
+
 temp.filePath: src/main/resources/
 

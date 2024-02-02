@@ -1,5 +1,7 @@
 package com.greenroom.server.api.data;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.greenroom.server.api.utils.ResponseWithData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,14 @@ public class GardeningDataController {
     private final GardeningDataService gds;
 
     @PostMapping("/gardening-data")
-    private ResponseEntity<Void> insertData(){
+    private ResponseEntity<ResponseWithData> insertData() throws JsonProcessingException {
         gds.insertPlant();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return ResponseEntity.ok(ResponseWithData.success());
     }
     @DeleteMapping("/gardening-data")
-    private ResponseEntity<Void> deleteData(){
+    private ResponseEntity<ResponseWithData> deleteData(){
         gds.deleteData();
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(ResponseWithData.success());
     }
 }

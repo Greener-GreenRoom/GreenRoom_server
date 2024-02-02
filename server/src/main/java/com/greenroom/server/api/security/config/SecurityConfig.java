@@ -36,7 +36,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final TokenProvider tokenProvider;
     private static final String[] ANONYMOUS_MATCHERS = {
-            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**"
+            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**", "/gardening-data"
     };
 
     @Bean

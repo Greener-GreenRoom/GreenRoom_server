@@ -2,7 +2,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -34,10 +34,6 @@ aws:
     path:
       root: https://d3pfhbnnnj15dk.cloudfront.net/local/
       plant: local/plant
-
-##농사로 open api key
-gardening-data:
-  api-key: 20240108ANK2BVVRSWBUJSCC6GOYQ
 
 logging.level:
   #  org.hibernate.SQL: debug
