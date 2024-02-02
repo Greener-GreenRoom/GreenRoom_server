@@ -1,10 +1,9 @@
-package com.greenroom.server.api.domain.user.dto;
+package com.greenroom.server.api.security.dto;
 
-import com.greenroom.server.api.domain.user.entity.User;
-import com.greenroom.server.api.domain.user.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter
@@ -16,7 +15,7 @@ public class GoogleOAuthAttribute {
     private String email;
 
     @Builder
-    public GoogleOAuthAttribute(Map<String, Object> attributes, String nameAttributeKey, String name, String email) {
+    public GoogleOAuthAttribute(Map<String, Object> attributes, String nameAttributeKey, String name, String email,String accessToken,LocalDateTime accessTokenExpirationTime) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
@@ -33,14 +32,6 @@ public class GoogleOAuthAttribute {
                 .email((String) attributes.get("email"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
-                .build();
-    }
-
-    public User toEntity() {
-        return User.builder()
-                .name(name)
-                .email(email)
-                .role(Role.GUEST)
                 .build();
     }
 }

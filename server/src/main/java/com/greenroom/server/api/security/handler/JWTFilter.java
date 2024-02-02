@@ -16,10 +16,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class JWTFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "authorization";
@@ -29,10 +30,9 @@ public class JWTFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-
         String jwt = resolveToken(httpServletRequest.getHeader(AUTHORIZATION_HEADER));
         String requestURI = httpServletRequest.getRequestURI();
-
+//        log.info("requestURI: " + requestURI);
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             Authentication authentication = tokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);

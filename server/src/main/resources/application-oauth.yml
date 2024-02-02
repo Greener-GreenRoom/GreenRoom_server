@@ -9,6 +9,7 @@ spring:
           google:
             client-id: 391375534343-a1cf5da6clgup5is688fv6jec1loeue5.apps.googleusercontent.com
             client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
             scope: profile,email
 
 

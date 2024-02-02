@@ -53,7 +53,7 @@ public class CustomUserDetailService implements UserDetailsService {
         TokenDto token = null;
 
         if(isFirstAuthentication(user)){
-            // 처음으로 인증할 떄
+            // 처음으로 인증할 떄 access refresh 둘 다 발급
             token = tokenProvider.createAllToken(authentication);
             user.setRefreshToken(token.getRefreshToken(),tokenProvider.extractExpiration(token.getRefreshToken()));
             user.setAccessToken(token.getAccessToken(),tokenProvider.extractExpiration(token.getAccessToken()));

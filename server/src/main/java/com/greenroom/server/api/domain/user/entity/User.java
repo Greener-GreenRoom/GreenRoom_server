@@ -2,13 +2,15 @@ package com.greenroom.server.api.domain.user.entity;
 
 import com.greenroom.server.api.domain.common.BaseTime;
 import com.greenroom.server.api.domain.greenroom.entity.Grade;
+import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
+import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "users")
+@Table(name = "`USERS`")
 @Entity
 @Getter
 //@ToString
@@ -41,7 +43,7 @@ public class User extends BaseTime {
     @Enumerated(EnumType.STRING)
     public Role role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grade_id")
     private Grade grade;
 
@@ -66,6 +68,34 @@ public class User extends BaseTime {
     public User setAccessToken(String accessToken,LocalDateTime accessTokenExpirationTime){
         this.accessToken = accessToken;
         this.accessTokenExpirationTime = accessTokenExpirationTime;
+        return this;
+    }
+
+    public static User createUser(UserDto userDto,Grade grade){
+        return User.builder()
+                .name(userDto.getName())
+                .password(userDto.getPassword())
+                .email(userDto.getEmail())
+                .grade(grade)
+                .role(Role.GENERAL)
+                .build();
+    }
+    public static User createUser(GoogleOAuthAttribute attribute,Grade grade){
+        return User.builder()
+                .name(attribute.getName())
+                .email(attribute.getEmail())
+                .grade(grade)
+                .role(Role.GENERAL)
+                .build();
+    }
+
+    public User setDefaultPasswordOnOAuth2User(String password){
+        this.password = password;
+        return this;
+    }
+
+    public User updateUser(GoogleOAuthAttribute attribute){
+        this.name = attribute.getName();
         return this;
     }
 }
