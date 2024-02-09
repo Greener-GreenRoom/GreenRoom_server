@@ -1,0 +1,44 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: ENC(KIVFi/fPxFjCMkDnFDspGuSNncU/mcs44GuSXb/sdWl9W8hQ9D4nkCqZrSuCVKg8qGA1IU21biLt+ELnuUlWVIbH8NSgwRHBr8oKYCgV6ge51xpsLgyOfkz71PYF+OpK)
+    username: ENC(K79xep5VEwTu+9ITJEmzupcSM2I+I2tk)
+    password: ENC(rFV9c6r3FOYKG54D4Wwijld5O9+4yyPS)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+      auto: false
+    credentials:
+      access-key: ENC(5Qm9y/4eq9GoLSSAAdzX6Ua4R/c4VtW12CKk3W7Nyco=)
+      secret-key: ENC(B5vhe+pRygyFbCkkLJ/ktoIBEDXdPADXctHch6epmUulyfLxjudyaKbrVQ/DHUzKKgNPo/nM3z4=)
+aws:
+  s3:
+    bucket: ENC(djnx43+kGW9Zm3meQ0z93p4anYNpX4sp)
+    path:
+      root: ENC(izKWxZvCX263qEp8ArXygKb9dATMuCLKpP2EI8b6hbC5AkPI9mEVBIj4YZ4F1OrGFh5A6pOQ7fS3Pri81+1Uwg==)
+      plant: dev/plant
+  cdn:
+    path:
+      root: ENC(AQc+Iesr9GSHoV3uEGQwyy3u7bhmC1DH5VocoNOuL0qu0G5ouV0faPNt+1SOpgCQ)
+      plant: dev/plant
+
+logging.level:
+  org.hibernate.type: info
+  #  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
+
+

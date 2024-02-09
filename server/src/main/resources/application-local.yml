@@ -1,0 +1,45 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/greenroom
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+      auto: false
+    credentials:
+      access-key: ENC(gl/HxMi8OGcvYZZcohuZb7GcS08fORxkTJhptTKR4+4=)
+      secret-key: ENC(nRd3e4+N9pOLhatHbEWO8EKzVDynQ9n084s7Saa2iXX6pM/FwFvjE9muwQ8i/t91NiwKbHzJris=)
+aws:
+  s3:
+    bucket: gr-dev-s3
+    path:
+      root: ENC(UD97cx+t+ZQAly4X9l0OxmIDMSD2wEZDA2VwPr2Rt0GMok9Co3AFwKhW8m6EgyAvnRUu11UDeYyX6CHoJW1PwQ==)
+      plant: local/plant
+  cdn:
+    path:
+      root: ENC(NgfDokmmEgolrf20QtVSqni1n5nGJhaP5G6h9/MogrFiDTSXfcbf2PSc1e99DAti)
+      plant: local/plant
+
+logging.level:
+  #  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
