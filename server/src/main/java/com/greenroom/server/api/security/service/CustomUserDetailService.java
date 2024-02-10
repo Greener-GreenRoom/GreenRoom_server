@@ -5,6 +5,7 @@ import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.security.dto.TokenDto;
 import com.greenroom.server.api.security.util.TokenProvider;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+
     private static final Map<Role,List<GrantedAuthority>> authorityMap = new HashMap<>();
 
     @Override

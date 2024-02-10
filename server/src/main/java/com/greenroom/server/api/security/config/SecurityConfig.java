@@ -36,7 +36,11 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final TokenProvider tokenProvider;
     private static final String[] ANONYMOUS_MATCHERS = {
-            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**", "/gardening-data"
+            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error"
+    };
+    private static final String[] STATIC_RESOURCES = {
+//            "/h2-console/**"
+            "/favicon.ico", "/css/**","/js/**","/image/**"
     };
 
     @Bean
@@ -49,6 +53,11 @@ public class SecurityConfig {
                                 authorizeRequests
                                         .requestMatchers(
                                                 Stream.of(ANONYMOUS_MATCHERS)
+                                                        .map(uri->new MvcRequestMatcher(introspector,uri))
+                                                        .toArray(MvcRequestMatcher[]::new)
+                                        ).permitAll()
+                                        .requestMatchers(
+                                                Stream.of(STATIC_RESOURCES)
                                                         .map(uri->new MvcRequestMatcher(introspector,uri))
                                                         .toArray(MvcRequestMatcher[]::new)
                                         ).permitAll()
@@ -70,16 +79,6 @@ public class SecurityConfig {
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
                 .build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-                .requestMatchers(new AntPathRequestMatcher( "/favicon.ico"))
-                .requestMatchers(new AntPathRequestMatcher( "/css/**"))
-                .requestMatchers(new AntPathRequestMatcher( "/js/**"))
-                .requestMatchers(new AntPathRequestMatcher( "/image/**"));
     }
     @Bean
     public static PasswordEncoder passwordEncoder() {

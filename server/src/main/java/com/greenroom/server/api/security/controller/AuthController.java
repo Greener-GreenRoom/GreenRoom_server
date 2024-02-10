@@ -6,11 +6,14 @@ import com.greenroom.server.api.security.dto.TokenDto;
 import com.greenroom.server.api.security.handler.JWTFilter;
 import com.greenroom.server.api.security.service.CustomUserDetailService;
 import com.greenroom.server.api.utils.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,35 +30,13 @@ public class AuthController {
     private final AuthenticationManagerBuilder authManagerBuilder;
     private final CustomUserDetailService userDetailService;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<ApiResponse> authorize(@RequestBody LoginDto loginDto, @AuthenticationPrincipal UserDetails user){
-
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-        Authentication authentication = authManagerBuilder.getObject().authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        TokenDto token = userDetailService.setTokens(authentication);
-
-        return new ResponseEntity<>(
-                ApiResponse.success(
-                        TokenDto.ResponseTokenDto.builder()
-                        .accessToken(token.getAccessToken())
-                        .refreshToken(token.getRefreshToken())
-                        .build()
-                ),
-                JWTFilter.responseTokenWithHeaders(token.getAccessToken()),
-                HttpStatus.OK
-        );
-    }
-
     @GetMapping("/authenticate/{userEmail}")
-    public ResponseEntity<ApiResponse> authorizeWithOAuth2(@PathVariable String userEmail, @AuthenticationPrincipal UserDetails user){
+    public ResponseEntity<ApiResponse> authorizeWithOAuth(@PathVariable String userEmail){
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userEmail,"password");
         Authentication authentication = authManagerBuilder.getObject().authenticate(authToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         TokenDto token = userDetailService.setTokens(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new ResponseEntity<>(
                 ApiResponse.success(
