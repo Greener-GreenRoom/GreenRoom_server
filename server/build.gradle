@@ -52,6 +52,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux' //webclient
 	implementation "org.json:json:20210307" //json
 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux' //webclient
+	implementation "org.json:json:20210307" //json
 }
 
 tasks.named('bootBuildImage') {

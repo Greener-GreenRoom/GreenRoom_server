@@ -13,23 +13,23 @@ import static com.greenroom.server.api.enums.ResponseCodeEnum.RESULT_NOT_FOUND;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler({
-			LoginException.class
-	})
-	public ApiResponse customException(CustomException e) {
-		if (e.getResponseCodeEnum() != RESULT_NOT_FOUND) {
-			log.warn("{} : {}", e.getClass(), e.getMessage());
-			log.warn("{}", e.getStackTrace()[0]);
-		}
-		return ApiResponse.failed(e.getResponseCodeEnum()).message(e.getMessage());
-	}
+    @ExceptionHandler({
+            LoginException.class
+    })
+    public ApiResponse customException(CustomException e) {
+        if (e.getResponseCodeEnum() != RESULT_NOT_FOUND) {
+            log.warn("{} : {}", e.getClass(), e.getMessage());
+            log.warn("{}", e.getStackTrace()[0]);
+        }
+        return ApiResponse.failed(e.getResponseCodeEnum()).message(e.getMessage());
+    }
 
-	@ExceptionHandler({
-			HttpMessageNotReadableException.class
-	})
-	public ApiResponse handlingException(Exception e) {
-		log.error("{} : {}", e.getClass(), e.getMessage());
-		log.error("{}", e.getStackTrace()[0]);
-		return ApiResponse.failed(FAILED).message(e.getMessage());
-	}
+    @ExceptionHandler({
+            HttpMessageNotReadableException.class
+    })
+    public ApiResponse handlingException(Exception e) {
+        log.error("{} : {}", e.getClass(), e.getMessage());
+        log.error("{}", e.getStackTrace()[0]);
+        return ApiResponse.failed(FAILED).message(e.getMessage());
+    }
 }

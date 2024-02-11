@@ -20,6 +20,6 @@ jwt:
 
 logging:
   config: classpath:logback-spring.xml
-
-temp.filePath: src/main/resources/
+temp:
+  filePath: src/main/resources/
 
