@@ -38,10 +38,10 @@ public class SecurityConfig {
     private static final String[] ANONYMOUS_MATCHERS = {
             "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error"
     };
-    private static final String[] STATIC_RESOURCES = {
-//            "/h2-console/**"
-            "/favicon.ico", "/css/**","/js/**","/image/**"
-    };
+//    private static final String[] STATIC_RESOURCES = {
+////            "/h2-console/**"
+//            "/favicon.ico", "/css/**","/js/**","/image/**"
+//    };
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
@@ -56,11 +56,11 @@ public class SecurityConfig {
                                                         .map(uri->new MvcRequestMatcher(introspector,uri))
                                                         .toArray(MvcRequestMatcher[]::new)
                                         ).permitAll()
-                                        .requestMatchers(
-                                                Stream.of(STATIC_RESOURCES)
-                                                        .map(uri->new MvcRequestMatcher(introspector,uri))
-                                                        .toArray(MvcRequestMatcher[]::new)
-                                        ).permitAll()
+//                                        .requestMatchers(
+//                                                Stream.of(STATIC_RESOURCES)
+//                                                        .map(uri->new MvcRequestMatcher(introspector,uri))
+//                                                        .toArray(MvcRequestMatcher[]::new)
+//                                        ).permitAll()
                                        .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionHandling) ->
@@ -80,6 +80,16 @@ public class SecurityConfig {
                 )
                 .build();
     }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+//                .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/favicon.ico"))
+                .requestMatchers(new AntPathRequestMatcher( "/css/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/js/**"))
+                .requestMatchers(new AntPathRequestMatcher( "/image/**"));
+    }
+
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

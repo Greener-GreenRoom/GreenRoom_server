@@ -17,6 +17,15 @@ spring:
     multipart:
       max-request-size: 100MB
       max-file-size: 100MB
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(VkN+FPQFTZCk8BL2KWS+U+5K1oaAdM3VrgycDyUdr4ePNqBUYOMf16QPCkZSpPdsyx2xq7QeZA0OQJc9F87I99LdQATUAMy2shlJWCvmfp7NgR3b3pftpg==)
+            client-secret: ENC(ED5ESqsh3QfXJH47Ans9UHvVWIBvfHsIK/4gPQEZMTLnRSRgSCJhEfZrqmI53Xf7)
+            redirect-uri: ENC(DCoCHDjZ13GWBBRsaKwxnXGU8VwMdUWdgetYA3H6UaBhe78qU6fCIHtwfzpErK26TDkjOfZQx7oWqKfe/vgEeyrDzmnrThun)
+            scope: profile,email
 cloud:
   aws:
     region:
