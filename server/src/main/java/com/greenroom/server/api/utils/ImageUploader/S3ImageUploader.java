@@ -11,11 +11,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -68,9 +70,7 @@ public class S3ImageUploader {
 
     public String upload(MultipartFile multipartFile,String dirName,String cdnImagePath) throws IOException {
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-        File convertedFile = convert(multipartFile, timestamp + "_" + multipartFile.getOriginalFilename());
+        File convertedFile = convert(multipartFile, UUID.randomUUID() + "_" + multipartFile.getOriginalFilename());
         String fileName;
         String url;
 
@@ -101,16 +101,23 @@ public class S3ImageUploader {
     }
 
     private File convert(MultipartFile file, String userNo) throws IOException {
-        File convertFile = new File(tempFilePath + userNo);
-        if (convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
+
+        File convertFile = new File(tempFilePath+userNo);
+        try {
+            if (convertFile.createNewFile()) {
+                try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+                    fos.write(file.getBytes());
+                }
+                catch (FileNotFoundException e){throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));}
+
             }
             return convertFile;
         }
-
-        throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));
+        catch(IOException e){
+            throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));
+        }
     }
+
 //
 //    public void deleteImage(String path) throws IOException {
 //        log.info("S3 delete image Path => {}",path);

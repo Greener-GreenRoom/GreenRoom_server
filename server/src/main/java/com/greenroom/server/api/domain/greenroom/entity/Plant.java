@@ -56,4 +56,8 @@ public class Plant extends BaseTime {
         this.otherInformation = otherInformation;
         this.plantCategory = plantCategory;
     }
+
+    public void updatePlantCount(){
+        plantCount +=1;
+    }
 }

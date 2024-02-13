@@ -1,6 +1,8 @@
 package com.greenroom.server.api.domain.greenroom.entity;
 
 import com.greenroom.server.api.domain.common.BaseTime;
+import com.greenroom.server.api.domain.greenroom.enums.ActivityName;
+import com.greenroom.server.api.domain.greenroom.enums.ActivityName;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,10 +18,11 @@ public class Activity extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long activityId;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private ActivityName name;
 
     @Builder
-    public Activity(Long activityId, String name) {
+    public Activity(Long activityId, ActivityName name) {
         this.activityId = activityId;
         this.name = name;
     }

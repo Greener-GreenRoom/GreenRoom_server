@@ -59,7 +59,10 @@ public class TokenProvider implements InitializingBean {
     }
 
     public boolean isExpired(String token){
-        return extractExpiration(token).isBefore(LocalDateTime.now());
+        try{
+            return extractExpiration(token).isBefore(LocalDateTime.now());}
+        catch (ExpiredJwtException e) {
+            return true;}
     }
 
     public TokenDto createAllToken(Authentication authentication) { // 토큰 생성
@@ -105,6 +108,7 @@ public class TokenProvider implements InitializingBean {
                 .email(authentication.getName())
                 .build();
     }
+
     public TokenDto updateRefreshToken(Authentication authentication,String accessToken) {
         //access token 갱신
         return TokenDto.builder()
