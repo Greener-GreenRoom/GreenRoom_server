@@ -42,7 +42,6 @@ public class GreenRoom extends BaseTime {
     public GreenRoom(String name, String pictureUrl,Boolean isVisible, GreenRoomStatus status, User user, Plant plant) {
         this.name = name;
         this.pictureUrl = pictureUrl;
-        this.memo = "";
         this.isVisible = Boolean.TRUE;
         this.status = GreenRoomStatus.ENABLED;
         this.user = user;

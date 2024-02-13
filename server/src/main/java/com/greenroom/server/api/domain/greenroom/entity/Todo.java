@@ -26,7 +26,7 @@ public class Todo extends BaseTime {
 
     private LocalDateTime nextTodoDate;
 
-    private LocalDateTime duration;
+    private Integer duration;
 
     private Boolean useYn;
 
@@ -39,11 +39,19 @@ public class Todo extends BaseTime {
     private Activity activity;
 
     @Builder
-    public Todo(LocalDateTime firstStartDate, LocalDateTime duration, Boolean useYn, GreenRoom greenRoom, Activity activity) {
+    public Todo(LocalDateTime firstStartDate, Integer duration, Boolean useYn, GreenRoom greenRoom, Activity activity, LocalDateTime nextTodoDate) {
         this.firstStartDate = firstStartDate;
         this.duration = duration;
         this.useYn = Boolean.TRUE;
         this.greenRoom = greenRoom;
         this.activity = activity;
+        this.nextTodoDate = nextTodoDate;
+    }
+
+    public void updateLastUpdateDate(LocalDateTime lastUpdateDate){
+        this.lastUpdateDate = lastUpdateDate;
+    }
+    public void updateNextTodoDate(LocalDateTime nextTodoDate){
+        this.nextTodoDate = nextTodoDate;
     }
 }
