@@ -109,15 +109,14 @@ public class S3ImageUploader {
                 try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                     fos.write(file.getBytes());
                 }
-                catch (FileNotFoundException e){log.info(e.getMessage());}
+                catch (FileNotFoundException e){throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));}
 
-                return convertFile;
             }
+            return convertFile;
         }
         catch(IOException e){
-            log.info(e.getMessage());
+            throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));
         }
-        throw new RuntimeException(String.format("파일 변환이 실패했습니다. 파일 이름: %s", file.getName()));
     }
 
 //
