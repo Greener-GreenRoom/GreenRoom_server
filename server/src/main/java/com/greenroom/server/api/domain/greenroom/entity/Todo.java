@@ -18,8 +18,6 @@ public class Todo extends BaseTime {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long todoId;
 
-    private Boolean isCompleted;
-
     private LocalDateTime firstStartDate;
 
     private LocalDateTime lastUpdateDate;

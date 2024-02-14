@@ -103,7 +103,6 @@ public class S3ImageUploader {
     private File convert(MultipartFile file, String userNo) throws IOException {
 
         File convertFile = new File(tempFilePath+userNo);
-        log.info(convertFile.getAbsolutePath());
         try {
             if (convertFile.createNewFile()) {
                 try (FileOutputStream fos = new FileOutputStream(convertFile)) {

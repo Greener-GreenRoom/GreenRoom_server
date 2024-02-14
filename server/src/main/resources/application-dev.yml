@@ -46,6 +46,8 @@ aws:
       root: ENC(AQc+Iesr9GSHoV3uEGQwyy3u7bhmC1DH5VocoNOuL0qu0G5ouV0faPNt+1SOpgCQ)
       plant: dev/plant
       greenroom: dev/greenroom
+temp:
+  filePath: ../../src/main/resources/
 
 logging.level:
   org.hibernate.type: info

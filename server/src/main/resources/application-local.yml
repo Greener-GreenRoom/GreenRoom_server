@@ -46,6 +46,9 @@ aws:
       plant: local/plant
       greenroom : local/greenroom
 
+temp:
+  filePath: src/main/resources/
+
 logging.level:
   #  org.hibernate.SQL: debug
   org.hibernate.type: trace
