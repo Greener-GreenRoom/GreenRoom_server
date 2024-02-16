@@ -61,7 +61,7 @@ public class SecurityConfig {
 //                                                        .map(uri->new MvcRequestMatcher(introspector,uri))
 //                                                        .toArray(MvcRequestMatcher[]::new)
 //                                        ).permitAll()
-                                       .anyRequest().authenticated()
+                                        .anyRequest().authenticated()
                 )
                 .exceptionHandling((exceptionHandling) ->
                         exceptionHandling
@@ -69,13 +69,13 @@ public class SecurityConfig {
                                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 )
                 .sessionManagement((sessionManagement)->
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(new JWTFilter(tokenProvider),UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login((oauthConfig) ->
                         oauthConfig.userInfoEndpoint((userInfoEndpointConfig) ->
-                                userInfoEndpointConfig.userService(googleOAuth2UserService)
-                        )
+                                        userInfoEndpointConfig.userService(googleOAuth2UserService)
+                                )
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
                 .build();

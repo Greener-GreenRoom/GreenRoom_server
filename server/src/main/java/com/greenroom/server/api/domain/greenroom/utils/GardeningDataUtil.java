@@ -39,6 +39,8 @@ public class GardeningDataUtil {
                     .retrieve()
                     .bodyToMono(String.class).block();
 
+            log.info("page 번호 : " + String.valueOf(num));
+
 
             JSONObject jsonResult = XML.toJSONObject(listResult);
             String jsonStr = jsonResult.toString(4);
@@ -101,9 +103,6 @@ public class GardeningDataUtil {
                     .retrieve()
                     .bodyToMono(String.class).block();
             JSONObject jsonResult = XML.toJSONObject(infoResult);
-
-//			String jsonStr = jsonResult.toString(4);
-//			System.out.println(jsonStr);
 
             JSONObject information = jsonResult.getJSONObject("response")
                     .getJSONObject("body")
