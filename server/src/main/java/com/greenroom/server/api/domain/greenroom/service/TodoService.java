@@ -1,6 +1,5 @@
 package com.greenroom.server.api.domain.greenroom.service;
 
-import com.greenroom.server.api.domain.greenroom.entity.GreenRoom;
 import com.greenroom.server.api.domain.greenroom.entity.Todo;
 import com.greenroom.server.api.domain.greenroom.entity.TodoLog;
 import com.greenroom.server.api.domain.greenroom.repository.TodoLogRepository;
@@ -13,10 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class TodoService {
     LocalDateTime today = LocalDateTime.now();
 
     @Transactional
-    public int completeTodo(Long greenroomId, ArrayList<Long> activityList, String userEmail){
+    public int completeTodo(Long greenroomId, ArrayList<Long> activityList, String userEmail) throws UsernameNotFoundException{
 
         ArrayList<Todo> todoList = todoRepository.findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(greenroomId,activityList);
 

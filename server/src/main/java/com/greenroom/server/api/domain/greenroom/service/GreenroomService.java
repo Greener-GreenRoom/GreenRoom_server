@@ -47,7 +47,7 @@ public class GreenroomService {
 
     ////greenroom 등록 + todo에 물주기 등록 + 식물 키우는 횟수 count 증가 + greenroom 꾸미기 item 등록
 
-    public Long registerGreenRoom(GreenroomRegistrationDto greenroomRegistrationDto, String userEmail, MultipartFile imgFile) throws RuntimeException,UsernameNotFoundException, IOException {
+    public Long registerGreenRoom(GreenroomRegistrationDto greenroomRegistrationDto, String userEmail, MultipartFile imgFile) throws RuntimeException, IOException {
 
         String shape = greenroomRegistrationDto.getShape();
         String name = greenroomRegistrationDto.getName();
@@ -61,22 +61,17 @@ public class GreenroomService {
         Activity activity = null;
         Item item = null ;
 
-        try{
-            //id값으로 plant 찾기
-            plant = plantRepository.findById(plantId).orElseThrow(()->new RuntimeException("해당 식물을 찾을 수 없음"));
 
-            // email로 user 찾기
-            user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없습니다."));
+        //id값으로 plant 찾기
+        plant = plantRepository.findById(plantId).orElseThrow(()->new RuntimeException("해당 식물을 찾을 수 없음"));
 
-            activity = activityRepository.findById(1L).orElseThrow(()->new RuntimeException("해당 activity 없음"));
+        // email로 user 찾기
+        user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없습니다."));
 
-            ///item 이름으로 item 찾기
-            item = itemRepository.findItemByItemName(shape).orElseThrow(()->new RuntimeException("해당 식물 모양을 찾을 수 없음"));
-        }
+        activity = activityRepository.findById(1L).orElseThrow(()->new RuntimeException("해당 activity 없음"));
 
-        catch (RuntimeException e){
-            throw new RuntimeException(e.getMessage());
-        }
+        ///item 이름으로 item 찾기
+        item = itemRepository.findItemByItemName(shape).orElseThrow(()->new RuntimeException("해당 식물 모양을 찾을 수 없음"));
 
         try
         {
@@ -88,7 +83,6 @@ public class GreenroomService {
         }
 
         //datetime 설정
-
         LocalDateTime firstStartDate = today.minusDays(lastWatering);
         LocalDateTime nextTodoDate = firstStartDate.plusDays(wateringDuration);
 
@@ -129,7 +123,7 @@ public class GreenroomService {
 
     }
 
-    public ArrayList<GreenroomResponseDto> getAllGreenroomInfo(String userEmail){
+    public ArrayList<GreenroomResponseDto> getAllGreenroomInfo(String userEmail) throws RuntimeException{
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new RuntimeException("해당 user를 찾을 수 없음"));
 
         ArrayList<GreenRoom> greenRooms = greenRoomRepository.findGreenRoomByUser(user);
@@ -170,7 +164,7 @@ public class GreenroomService {
     }
 
 
-    public ArrayList<GreenRoomListDto> getGreenroomList(String userEmail){
+    public ArrayList<GreenRoomListDto> getGreenroomList(String userEmail) throws RuntimeException{
         ArrayList<GreenRoomListDto> result = new ArrayList<>();
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음"));
 
@@ -195,7 +189,7 @@ public class GreenroomService {
     }
 
 
-    public GreenroomResponseDto getSpecificGreenroomInfo(Long greenroomId){
+    public GreenroomResponseDto getSpecificGreenroomInfo(Long greenroomId) throws RuntimeException{
         GreenRoom greenRoom = greenRoomRepository.findById(greenroomId).orElseThrow(()->new RuntimeException("해당 greenroom 없음."));
         ArrayList<Adornment> adornments= adornmentRepository.findAdornmentByGreenRoom_GreenroomId(greenroomId);
         ArrayList<Todo>todos=todoRepository.findTodoByGreenRoom_GreenroomId(greenroomId);

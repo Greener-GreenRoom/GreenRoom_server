@@ -5,7 +5,6 @@ import com.greenroom.server.api.domain.greenroom.entity.Plant;
 import com.greenroom.server.api.domain.greenroom.repository.PlantRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import  org.springframework.data.domain.Page;
 
@@ -24,7 +22,7 @@ import  org.springframework.data.domain.Page;
 public class PlantService {
     private final PlantRepository plantRepository;
     @Transactional(readOnly = true)
-    public String getWateringTip(Long id) throws IllegalArgumentException {
+    public String getWateringTip(Long id) throws RuntimeException {
         Optional<Plant> optionalPlant = plantRepository.findById(id);
         Plant plant = optionalPlant.orElseThrow(()->new RuntimeException("해당 식물 없음"));
         return plant.getWaterCycle();

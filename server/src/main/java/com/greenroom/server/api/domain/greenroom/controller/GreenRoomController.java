@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class GreenRoomController {
     private final GreenroomService greenroomService;
     @PostMapping(value = "/greenroom",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ApiResponse> registerGreenRoom(@RequestPart(value = "request") GreenroomRegistrationDto greenroomRegistrationDto,@RequestPart(value ="imgFile",required =  false) MultipartFile imgFile, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+    public ResponseEntity<ApiResponse> registerGreenRoom(@RequestPart(value = "request") GreenroomRegistrationDto greenroomRegistrationDto,@RequestPart(value ="imgFile",required =  false) MultipartFile imgFile, @AuthenticationPrincipal UserDetails userDetails) throws IOException,RuntimeException {
 
         String userEmail = userDetails.getUsername();
 
