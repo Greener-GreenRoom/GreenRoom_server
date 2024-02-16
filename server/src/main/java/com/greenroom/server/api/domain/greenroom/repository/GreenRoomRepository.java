@@ -12,6 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface GreenRoomRepository extends JpaRepository<GreenRoom,Long> {
-   Optional<ArrayList<GreenRoom>> findGreenRoomByUser(User user);
+   ArrayList<GreenRoom> findGreenRoomByUser(User user);
 
 }

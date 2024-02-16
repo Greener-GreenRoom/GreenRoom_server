@@ -104,9 +104,6 @@ public class GardeningDataUtil {
                     .bodyToMono(String.class).block();
             JSONObject jsonResult = XML.toJSONObject(infoResult);
 
-//			String jsonStr = jsonResult.toString(4);
-//			System.out.println(jsonStr);
-
             JSONObject information = jsonResult.getJSONObject("response")
                     .getJSONObject("body")
                     .getJSONObject("item");

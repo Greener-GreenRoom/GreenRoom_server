@@ -26,7 +26,7 @@ public class PlantService {
     @Transactional(readOnly = true)
     public String getWateringTip(Long id) throws IllegalArgumentException {
         Optional<Plant> optionalPlant = plantRepository.findById(id);
-        Plant plant = optionalPlant.orElseThrow(()->new IllegalArgumentException("해당 식물 없음"));
+        Plant plant = optionalPlant.orElseThrow(()->new RuntimeException("해당 식물 없음"));
         return plant.getWaterCycle();
     }
 

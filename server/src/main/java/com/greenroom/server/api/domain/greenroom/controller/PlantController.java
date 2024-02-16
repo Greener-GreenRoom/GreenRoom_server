@@ -23,14 +23,10 @@ public class PlantController {
     @GetMapping("/plant/{id}/watering-tip")
     public ResponseEntity<ApiResponse> getWateringTip(@PathVariable("id") Long id){
         ApiResponse response = ApiResponse.success();
-       try {
-           String watering_tip = plantService.getWateringTip(id);
-           response = ApiResponse.success(watering_tip);
-       }
-       catch (RuntimeException e){
-           response = ApiResponse.failed(ResponseCodeEnum.RESULT_NOT_FOUND,e.getMessage());
-       }
-       return ResponseEntity.ok(response);
+
+        String watering_tip = plantService.getWateringTip(id);
+
+       return ResponseEntity.ok(ApiResponse.success(watering_tip));
     }
 
 }

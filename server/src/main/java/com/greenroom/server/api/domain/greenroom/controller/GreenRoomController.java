@@ -25,59 +25,41 @@ import java.util.HashMap;
 public class GreenRoomController {
     private final GreenroomService greenroomService;
     @PostMapping(value = "/greenroom",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ApiResponse> registerGreenRoom(@RequestPart(value = "request") GreenroomRegistrationDto greenroomRegistrationDto,@RequestPart(value ="imgFile",required =  false) MultipartFile imgFile, @AuthenticationPrincipal UserDetails userDetails){
-
-        ApiResponse response = ApiResponse.success();
+    public ResponseEntity<ApiResponse> registerGreenRoom(@RequestPart(value = "request") GreenroomRegistrationDto greenroomRegistrationDto,@RequestPart(value ="imgFile",required =  false) MultipartFile imgFile, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
 
         String userEmail = userDetails.getUsername();
-        try{
-            Long greenroomId = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
-            HashMap<String,Object> result = new HashMap<String,Object>();
-            result.put("greenroom_id",greenroomId);
-            response = ApiResponse.success(result);
-        }
-        catch (RuntimeException | IOException e){
-            response = ApiResponse.failed(ResponseCodeEnum.FAILED,e.getMessage());
-        }
-        return ResponseEntity.ok(response);
+
+        Long greenroomId = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
+        HashMap<String,Object> result = new HashMap<String,Object>();
+        result.put("greenroom_id",greenroomId);
+
+        return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping("/greenroom")
     public ResponseEntity<ApiResponse> getAllGreenroomInfo(@AuthenticationPrincipal UserDetails userDetails){
         String userEmail = userDetails.getUsername();
-        try{
-            ArrayList<GreenroomResponseDto> greenroomResponseDtos = greenroomService.getAllGreenroomInfo(userEmail);
-           if (greenroomResponseDtos==null){return ResponseEntity.ok(ApiResponse.success(null));}
-            return ResponseEntity.ok(ApiResponse.success(greenroomResponseDtos));
-        }
-        catch(RuntimeException e){
-                return ResponseEntity.ok(ApiResponse.failed(ResponseCodeEnum.FAILED,e.getMessage()));
-        }
+
+        ArrayList<GreenroomResponseDto> greenroomResponseDtos = greenroomService.getAllGreenroomInfo(userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(greenroomResponseDtos));
     }
 
     @GetMapping("/greenroom-list")
     public ResponseEntity<ApiResponse> getGreenroomList(@AuthenticationPrincipal UserDetails userDetails){
         String userEmail = userDetails.getUsername();
-        try{
-            ArrayList<GreenRoomListDto> greenRoomListDtos = greenroomService.getGreenroomList(userEmail);
-            if (greenRoomListDtos==null){return ResponseEntity.ok(ApiResponse.success(null));}
-            return ResponseEntity.ok(ApiResponse.success(greenRoomListDtos));
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.ok(ApiResponse.failed(ResponseCodeEnum.FAILED,e.getMessage()));
-        }
+
+        ArrayList<GreenRoomListDto> greenRoomListDtos = greenroomService.getGreenroomList(userEmail);
+
+        return ResponseEntity.ok(ApiResponse.success(greenRoomListDtos));
 
     }
 
     @GetMapping("/greenroom/{id}")
-    public ResponseEntity<ApiResponse> getSpecificGreenroomInfo(@PathVariable(value = "id")Long greenroom_id){
-        try {
-            GreenroomResponseDto greenroomResponseDto =  greenroomService.getSpecificGreenroomInfo(greenroom_id);
-            return ResponseEntity.ok(ApiResponse.success(greenroomResponseDto));
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.ok(ApiResponse.failed(ResponseCodeEnum.FAILED,e.getMessage()));
-        }
+    public ResponseEntity<ApiResponse> getSpecificGreenroomInfo(@PathVariable(value = "id")Long greenroomId){
+
+        GreenroomResponseDto greenroomResponseDto =  greenroomService.getSpecificGreenroomInfo(greenroomId);
+        return ResponseEntity.ok(ApiResponse.success(greenroomResponseDto));
 
     }
 }
