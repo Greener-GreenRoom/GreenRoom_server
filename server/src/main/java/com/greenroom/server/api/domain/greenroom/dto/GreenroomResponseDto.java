@@ -11,8 +11,8 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class GreenroomResponseDto {
-    private GreenroomInfoDto greenroom_info;
-    private HashMap<String,String> greenroom_item;
-    private HashMap<String, LocalDate> greenroom_todo;
+    private GreenroomInfoDto greenroomInfo;
+    private HashMap<String,String> greenroomItem;
+    private HashMap<String, LocalDate> greenroomTodo;
 
 }

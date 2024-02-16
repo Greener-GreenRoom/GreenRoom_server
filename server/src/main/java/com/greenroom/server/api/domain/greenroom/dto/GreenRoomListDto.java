@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class GreenRoomListDto {
-    private Long greenroom_id;
+    private Long greenroomId;
     private String name;
     private String shape;
-    private int todo_num;
+    private int todoNum;
 
 
 }

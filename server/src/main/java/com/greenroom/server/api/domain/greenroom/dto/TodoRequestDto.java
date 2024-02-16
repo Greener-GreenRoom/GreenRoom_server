@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class TodoRequestDto {
 
-    private Long greenroom_id ;
-    private ArrayList<Long> todo_list ;
+    private Long greenroomId ;
+    private ArrayList<Long> activityList ;
 
 }

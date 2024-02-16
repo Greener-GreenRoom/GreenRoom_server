@@ -11,16 +11,16 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @RequiredArgsConstructor
 public class GreenroomInfoDto {
-    private Long greenroom_id;
-    private String greenroom_name;
-    private String image_url;
+    private Long greenroomId;
+    private String greenroomName;
+    private String imageUrl;
     private int period;
     private String memo;
 
     public GreenroomInfoDto(Long greenroomId, String name, String pictureUrl, int period, String memo) {
-        this.greenroom_id = greenroomId;
-        this.greenroom_name= name;
-        this.image_url = pictureUrl;
+        this.greenroomId = greenroomId;
+        this.greenroomName= name;
+        this.imageUrl = pictureUrl;
         this.period = period;
         this.memo = memo;
 

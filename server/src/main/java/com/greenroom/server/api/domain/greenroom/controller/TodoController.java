@@ -28,20 +28,18 @@ public class TodoController{
 
 @PostMapping("/greenroom/todo")
 public ResponseEntity<ApiResponse> completeTodo(@RequestBody TodoRequestDto todoRequestDto,@AuthenticationPrincipal UserDetails userDetails) {
+
     String userEmail = userDetails.getUsername();
-    Long greenroom_id = todoRequestDto.getGreenroom_id();
-    ArrayList<Long> todo_list = todoRequestDto.getTodo_list();
+    Long greenroomId = todoRequestDto.getGreenroomId();
+    ArrayList<Long> todoList = todoRequestDto.getActivityList();
 
-    try {
-        int totalPoint = todoService.completeTodo(greenroom_id, todo_list, userEmail);
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("seed", totalPoint);
-        return ResponseEntity.ok(ApiResponse.success(result));
+    int totalPoint = todoService.completeTodo(greenroomId, todoList, userEmail);
+    HashMap<String, Object> result = new HashMap<String, Object>();
+    result.put("seed", totalPoint);
+    return ResponseEntity.ok(ApiResponse.success(result));
 
-    } catch (RuntimeException e) {
-
-        return ResponseEntity.ok(ApiResponse.failed(ResponseCodeEnum.FAILED, e.getMessage()));
     }
-}
+
 
 }
+
