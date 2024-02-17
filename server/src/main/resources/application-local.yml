@@ -2,7 +2,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -39,10 +39,15 @@ aws:
     path:
       root: ENC(UD97cx+t+ZQAly4X9l0OxmIDMSD2wEZDA2VwPr2Rt0GMok9Co3AFwKhW8m6EgyAvnRUu11UDeYyX6CHoJW1PwQ==)
       plant: local/plant
+      greenroom : local/greenroom
   cdn:
     path:
       root: ENC(NgfDokmmEgolrf20QtVSqni1n5nGJhaP5G6h9/MogrFiDTSXfcbf2PSc1e99DAti)
       plant: local/plant
+      greenroom : local/greenroom
+
+temp:
+  filePath: src/main/resources/
 
 logging.level:
   #  org.hibernate.SQL: debug

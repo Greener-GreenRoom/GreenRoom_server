@@ -21,8 +21,7 @@ public class TodoLog extends BaseTime {
     private Todo todo;
 
     @Builder
-    public TodoLog(Long todoLogId, Todo todo) {
-        this.todoLogId = todoLogId;
+    public TodoLog(Todo todo) {
         this.todo = todo;
     }
 }

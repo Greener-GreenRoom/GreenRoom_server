@@ -4,6 +4,7 @@ package com.greenroom.server.api.domain.greenroom.entity;
 import com.greenroom.server.api.domain.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,10 @@ public class Adornment extends BaseTime {
     @JoinColumn(name = "greenroom_id",nullable = false,updatable = false)
     private GreenRoom greenRoom;
 
+    @Builder
+    public Adornment (Item item, GreenRoom greenRoom){
+        this.item = item;
+        this.greenRoom = greenRoom;
+    }
 }
+

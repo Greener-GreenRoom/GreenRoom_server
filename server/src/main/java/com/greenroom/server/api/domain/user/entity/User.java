@@ -98,4 +98,11 @@ public class User extends BaseTime {
         this.name = attribute.getName();
         return this;
     }
+
+    public void updateTotalSeed(int plusSeed){
+        this.totalSeed +=plusSeed;
+    }
+    public void updateWeeklySeed(int plusSeed){
+        this.weeklySeed +=plusSeed;
+    }
 }

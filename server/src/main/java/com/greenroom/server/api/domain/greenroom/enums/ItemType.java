@@ -6,9 +6,10 @@ import lombok.Getter;
 public enum ItemType {
 
     SHAPE("모양"),
-    BACKGROUND("배경"),
-    ACCESSORIES("악세사리"),
-    FLOWERPOT("화분");
+    HAIR_ACCESSORY("머리핀"),
+    GLASSES("안경"),
+    GLASS_ACCESSORY("창문소품"),
+    SHELF_ACCESSORY("선반소품");
 
     private final String description;
 

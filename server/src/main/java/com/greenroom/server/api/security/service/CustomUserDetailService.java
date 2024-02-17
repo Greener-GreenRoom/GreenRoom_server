@@ -18,6 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -54,6 +55,11 @@ public class CustomUserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
         TokenDto token = null;
 
+        ///에러 방지 임시책
+        if(!isFirstAuthentication(user)){
+            token = new TokenDto(user.getEmail(),user.getAccessToken(), user.getRefreshToken());
+        }
+
         if(isFirstAuthentication(user)){
             // 처음으로 인증할 떄 access refresh 둘 다 발급
             token = tokenProvider.createAllToken(authentication);
@@ -76,10 +82,10 @@ public class CustomUserDetailService implements UserDetailsService {
         return token;
     }
 
+
     private static boolean isFirstAuthentication(User user) {
         return !StringUtils.hasText(user.getRefreshToken());
     }
-
 
     @EventListener(ApplicationReadyEvent.class)
     public void setAuthoritiesMap(){

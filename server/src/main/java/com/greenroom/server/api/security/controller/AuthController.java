@@ -1,6 +1,7 @@
 package com.greenroom.server.api.security.controller;
 
 
+import com.greenroom.server.api.enums.ResponseCodeEnum;
 import com.greenroom.server.api.security.dto.LoginDto;
 import com.greenroom.server.api.security.dto.TokenDto;
 import com.greenroom.server.api.security.handler.JWTFilter;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,4 +51,5 @@ public class AuthController {
                 HttpStatus.OK
         );
     }
+
 }
