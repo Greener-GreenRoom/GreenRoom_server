@@ -32,7 +32,7 @@ public class GardeningDataUtil {
     public Map<String, ArrayList<String>> plantList() {
         log.info("식물 list 받아오는 중");
         Map<String,ArrayList<String>> plantBasic = new HashMap<String,ArrayList<String>>();
-        for (int num=1;num<21;num++) {
+        for (int num=1;num<2;num++) {
 
             String baseURL = "http://api.nongsaro.go.kr/service/garden/gardenList?apiKey="+apiKey+"&pageNo="+Integer.toString(num);
             String listResult = webClient.get().uri(baseURL)

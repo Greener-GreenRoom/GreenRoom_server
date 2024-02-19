@@ -1,6 +1,7 @@
 package com.greenroom.server.api.domain.greenroom.controller;
 
 
+import com.greenroom.server.api.domain.greenroom.dto.GradeUpResponseDto;
 import com.greenroom.server.api.domain.greenroom.dto.TodoRequestDto;
 import com.greenroom.server.api.domain.greenroom.entity.Todo;
 import com.greenroom.server.api.domain.greenroom.service.TodoService;
@@ -33,9 +34,7 @@ public ResponseEntity<ApiResponse> completeTodo(@RequestBody TodoRequestDto todo
     Long greenroomId = todoRequestDto.getGreenroomId();
     ArrayList<Long> todoList = todoRequestDto.getActivityList();
 
-    int totalPoint = todoService.completeTodo(greenroomId, todoList, userEmail);
-    HashMap<String, Object> result = new HashMap<String, Object>();
-    result.put("seed", totalPoint);
+    GradeUpResponseDto result = todoService.completeTodo(greenroomId, todoList, userEmail);
     return ResponseEntity.ok(ApiResponse.success(result));
 
     }

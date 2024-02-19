@@ -105,4 +105,5 @@ public class User extends BaseTime {
     public void updateWeeklySeed(int plusSeed){
         this.weeklySeed +=plusSeed;
     }
+    public void updateGrade(Grade grade) {this.grade = grade; }
 }

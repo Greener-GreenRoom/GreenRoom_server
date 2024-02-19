@@ -4,7 +4,7 @@ import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
-import com.greenroom.server.api.domain.user.repository.GradeRepository;
+import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.enums.ResponseCodeEnum;
 import jakarta.transaction.Transactional;

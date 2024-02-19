@@ -115,10 +115,10 @@ public class TokenProvider implements InitializingBean {
                 .accessToken(accessToken)
                 .refreshToken(
                         Jwts.builder()
-                        .setSubject(authentication.getName())
-                        .signWith(key, SignatureAlgorithm.HS512)
-                        .setExpiration(createTokenValidity(this.refreshTokenValidityInMilliSeconds))
-                        .compact()
+                                .setSubject(authentication.getName())
+                                .signWith(key, SignatureAlgorithm.HS512)
+                                .setExpiration(createTokenValidity(this.refreshTokenValidityInMilliSeconds))
+                                .compact()
                 )
                 .email(authentication.getName())
                 .build();
@@ -127,7 +127,13 @@ public class TokenProvider implements InitializingBean {
         return new Date((new Date()).getTime() + milliseconds);
     }
     public boolean isUpdatableRefreshToken(String token){
-        return LocalDateTime.now().plusDays(7).isBefore(extractExpiration(token));
+        try {
+            return LocalDateTime.now().plusDays(7).isBefore(extractExpiration(token));
+        }
+        catch (ExpiredJwtException e){
+            return false;
+        }
+
     }
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts

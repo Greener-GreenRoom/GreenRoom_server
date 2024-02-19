@@ -1,7 +1,7 @@
 package com.greenroom.server.api.security.service;
 
 
-import com.greenroom.server.api.domain.user.repository.GradeRepository;
+import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
 import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.repository.UserRepository;

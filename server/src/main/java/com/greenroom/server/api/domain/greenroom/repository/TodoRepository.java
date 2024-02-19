@@ -23,5 +23,5 @@ public interface TodoRepository extends JpaRepository<Todo,Long> {
     @EntityGraph(attributePaths = {"activity"})
     ArrayList<Todo> findTodoByGreenRoom_GreenroomId(Long greenroomId);
 
-    ArrayList<Todo> findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(Long greenroomId, Collection<Long> activityIdList);
+    ArrayList<Todo> findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(Long greenroomId, ArrayList<Long> activityIdList);
 }

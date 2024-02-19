@@ -19,10 +19,13 @@ public class Grade {
 
     private int requiredSeed;
 
+    private int level;
+
     @Builder
-    public Grade(String description,String gradeImageUrl,int requiredSeed){
+    public Grade(String description,String gradeImageUrl,int requiredSeed,int level){
         this.description =description;
         this.gradeImageUrl = gradeImageUrl;
         this.requiredSeed = requiredSeed;
+        this.level = level;
     }
 }

@@ -1,5 +1,6 @@
 package com.greenroom.server.api.domain.greenroom.controller;
 
+import com.greenroom.server.api.domain.greenroom.dto.GradeUpResponseDto;
 import com.greenroom.server.api.domain.greenroom.dto.GreenRoomListDto;
 import com.greenroom.server.api.domain.greenroom.dto.GreenroomRegistrationDto;
 import com.greenroom.server.api.domain.greenroom.dto.GreenroomResponseDto;
@@ -29,18 +30,16 @@ public class GreenRoomController {
 
         String userEmail = userDetails.getUsername();
 
-        Long greenroomId = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
-        HashMap<String,Object> result = new HashMap<String,Object>();
-        result.put("greenroom_id",greenroomId);
+        GradeUpResponseDto result = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
 
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping("/greenroom")
-    public ResponseEntity<ApiResponse> getAllGreenroomInfo(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<ApiResponse> getAllGreenroomInfo(@AuthenticationPrincipal UserDetails userDetails,@RequestParam(value = "sort",defaultValue ="desc") String sort, @RequestParam(value = "range", defaultValue ="all") String range){
         String userEmail = userDetails.getUsername();
 
-        ArrayList<GreenroomResponseDto> greenroomResponseDtos = greenroomService.getAllGreenroomInfo(userEmail);
+        ArrayList<GreenroomResponseDto> greenroomResponseDtos = greenroomService.getAllGreenroomInfo(userEmail,sort,range);
 
         return ResponseEntity.ok(ApiResponse.success(greenroomResponseDtos));
     }

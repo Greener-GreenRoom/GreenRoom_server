@@ -29,4 +29,9 @@ public class PlantController {
        return ResponseEntity.ok(ApiResponse.success(watering_tip));
     }
 
+    @GetMapping("/plant")
+    public ResponseEntity<ApiResponse> getAllPlantList(){
+        return ResponseEntity.ok((ApiResponse.success(plantService.getAllPlantList())));
+    }
+
 }
