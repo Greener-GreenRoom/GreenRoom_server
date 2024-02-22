@@ -18,7 +18,7 @@ public class AdornmentService {
     private final AdornmentRepository adornmentRepository;
     private final ItemRepository  itemRepository;
 
-    public void createOneAdornment(OneAdornmentCreationDto oneAdornmentCreationDto){
+    public void createOneAdornment(OneAdornmentCreationDto oneAdornmentCreationDto) throws IllegalArgumentException{
 
         Item item = itemRepository.findItemByItemName(oneAdornmentCreationDto.getItemName()).orElseThrow(()->new IllegalArgumentException("해당 item 없음."));
 

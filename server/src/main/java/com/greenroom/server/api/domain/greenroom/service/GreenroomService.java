@@ -11,7 +11,6 @@ import com.greenroom.server.api.utils.ImageUploader.GreenroomImageUploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class GreenroomService {
     private final GreenRoomRepository greenRoomRepository;
-    private final ItemRepository itemRepository;
     private final AdornmentRepository adornmentRepository;
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
@@ -43,7 +41,7 @@ public class GreenroomService {
 
     ////greenroom 등록 + todo에 물주기 등록(레벨업) + 식물 키우는 횟수 count 증가 + greenroom 꾸미기 item 등록
 
-    public GradeUpResponseDto registerGreenRoom(GreenroomRegistrationDto greenroomRegistrationDto, String userEmail, MultipartFile imgFile) throws IllegalArgumentException, IOException,UsernameNotFoundException {
+    public GreenroomRegisterResponseDto registerGreenRoom(GreenroomRegistrationDto greenroomRegistrationDto, String userEmail, MultipartFile imgFile) throws IllegalArgumentException, IOException,UsernameNotFoundException {
 
         String shape = greenroomRegistrationDto.getShape();
         String name = greenroomRegistrationDto.getName();
@@ -53,8 +51,8 @@ public class GreenroomService {
         LocalDateTime firstStartDate = LocalDate.parse(lastWatering).atStartOfDay();
         String imageUrl;
 
-
-        Plant plant = plantId==null? null: plantRepository.findById(plantId).orElseThrow(() -> new IllegalArgumentException("해당 greenroom을 찾을 수 없습니다."));
+        //plant id가 null일 경우, 더미 plant 데이터로 생성
+        Plant plant = plantId==null? plantRepository.findByPlantCategory("dummy").orElseThrow(()->new IllegalArgumentException("dummy greenroom을 찾을 수 없음.")): plantRepository.findById(plantId).orElseThrow(() -> new IllegalArgumentException("해당 greenroom을 찾을 수 없습니다."));
 
         // email 로 user 찾기
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("해당 user를 찾을 수 없습니다."));
@@ -79,6 +77,9 @@ public class GreenroomService {
                 .build();
         GreenRoom savedGreenRoom = greenRoomRepository.save(greenRoom);
 
+        //식물 키우는 횟수 증가
+        plant.updatePlantCount();
+
         Grade beforeGrade = user.getGrade();
         //물주기 주기 등록 event 발생
         applicationEventPublisher.publishEvent(new TodoCreationDto(savedGreenRoom.getGreenroomId(),firstStartDate,wateringDuration,1L));
@@ -87,33 +88,38 @@ public class GreenroomService {
         //꾸미기 아이템 등록 event 발생
         applicationEventPublisher.publishEvent(new OneAdornmentCreationDto(shape,savedGreenRoom));
 
-        ////해당 식물을 키우는 횟수 증가
-        if (plant!=null){plant.updatePlantCount();}
 
-        return new GradeUpResponseDto(savedGreenRoom.getGreenroomId(),user.getGrade().getLevel(),1,!beforeGrade.equals(afterGrade));
+        return new GreenroomRegisterResponseDto(savedGreenRoom.getGreenroomId(),new GradeUpDto(user.getGrade().getLevel(),1,!beforeGrade.equals(afterGrade)));
 
     }
 
-        public ArrayList<GreenroomResponseDto> getAllGreenroomInfo(String userEmail,String sort,String range) throws UsernameNotFoundException{
+        public GreenroomResponseDtoWithUser getAllGreenroomInfo(String userEmail,String sort,String range) throws UsernameNotFoundException{
             User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음"));
 
-
             ArrayList<GreenRoomStatus> greenroomStatus = new ArrayList<>();
+            //전체 범위 가져오기
             if (Objects.equals(range, "all")){greenroomStatus.add(GreenRoomStatus.ENABLED);greenroomStatus.add(GreenRoomStatus.DISABLED);}
+            //죽은 식물만 가져오기
             else if(Objects.equals(range, "disabled")){greenroomStatus.add(GreenRoomStatus.DISABLED);}
+            //키우고 있는 식물만 가져오기
             else if (Objects.equals(range, "enabled")) {greenroomStatus.add(GreenRoomStatus.ENABLED);}
 
             ArrayList<GreenRoom> greenRooms = new ArrayList<>();
+
+            //오래된 순으로 가져오기
             if(Objects.equals(sort, "asc")) {greenRooms = greenRoomRepository.findGreenRoomByUserAndStatusIn(user,greenroomStatus,Sort.by(Sort.Order.asc("createDate")));
             }
+            //최신순으로 가져오기
             else if(Objects.equals(sort, "desc")){ greenRooms = greenRoomRepository.findGreenRoomByUserAndStatusIn(user,greenroomStatus,Sort.by(Sort.Order.desc("createDate")));
             }
 
-
             if(greenRooms.isEmpty()){return null;}
 
+            //그린룸 별 갖고 있는 아이템 가져오기
             Map<GreenRoom, List<Adornment>> adornments = adornmentRepository.findAdornmentByGreenRoom_User(user).stream().collect(Collectors.groupingBy(Adornment::getGreenRoom));;
-            Map<GreenRoom, List<Todo>> todos = todoRepository.findTodoByGreenRoom_User(user).stream().collect(Collectors.groupingBy(Todo::getGreenRoom));;
+
+            ///그린룸 별 활성화된 주기 가져오기
+            Map<GreenRoom, List<Todo>> todos = todoRepository.findTodoByGreenRoom_UserAndUseYn(user,true).stream().collect(Collectors.groupingBy(Todo::getGreenRoom));;
 
             ArrayList<GreenroomResponseDto> greenroomResponseDtoList = new ArrayList<>();
 
@@ -122,12 +128,15 @@ public class GreenroomService {
                 items.put("shape",null);
                 items.put("hair_accessory",null);
                 items.put("glasses",null);
-                items.put("glass_accessory",null);
-                items.put("shelf_accessory",null);
+                items.put("background_window",null);
+                items.put("background_shelf",null);
 
-                for(Adornment adornment : adornments.get(greenRoom)){
-                    items.replace(adornment.getItem().getItemType().name().toLowerCase(),adornment.getItem().getItemName());
+                if (adornments.get(greenRoom)!=null){
+                    for(Adornment adornment : adornments.get(greenRoom)){
+                        items.replace(adornment.getItem().getItemType().name().toLowerCase(),adornment.getItem().getItemName());
+                    }
                 }
+
 
                 HashMap<String, LocalDate> activityAndDate = new HashMap<>();
                 activityAndDate.put("watering",null);
@@ -137,38 +146,50 @@ public class GreenroomService {
                 activityAndDate.put("ventilation",null);
                 activityAndDate.put("spray",null);
 
-                for(Todo todo: todos.get(greenRoom)){
-                    activityAndDate.replace(todo.getActivity().getName().name().toLowerCase(), LocalDate.from(todo.getNextTodoDate()));
+                if(todos.get(greenRoom)!=null) {
+                    for (Todo todo : todos.get(greenRoom)) {
+                        activityAndDate.replace(todo.getActivity().getName().name().toLowerCase(), LocalDate.from(todo.getNextTodoDate()));
+                    }
                 }
 
                 greenroomResponseDtoList.add(new GreenroomResponseDto(GreenroomInfoDto.from(greenRoom),items,activityAndDate));
             }
-            return greenroomResponseDtoList;
+            return new GreenroomResponseDtoWithUser(UserDto.from(user),greenroomResponseDtoList);
+
         }
 
 
-        public ArrayList<GreenRoomListDto> getGreenroomList(String userEmail) throws UsernameNotFoundException{
+        public ArrayList<GreenRoomListDto> getGreenroomList(String userEmail,String sort) throws UsernameNotFoundException{
             ArrayList<GreenRoomListDto> result = new ArrayList<>();
             User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음"));
+            ArrayList<GreenRoom> greenRooms = new ArrayList<>() ;
 
-            ArrayList<GreenRoom> greenRooms = greenRoomRepository.findGreenRoomByUser(user,Sort.by(Sort.Order.desc("createDate")));
+            ///user가 현재 키우고 있는 식물만 오래된 순으로 가져오기
+            if(Objects.equals(sort, "asc")){ greenRooms = greenRoomRepository.findGreenRoomByUserAndStatus(user,GreenRoomStatus.ENABLED,Sort.by(Sort.Order.asc("createDate"))); } // 오래된순
+            /////user가 현재 키우고 있는 식물만 최신 순으로 가져오기
+            else if(Objects.equals(sort, "desc")) {greenRooms = greenRoomRepository.findGreenRoomByUserAndStatus(user,GreenRoomStatus.ENABLED,Sort.by(Sort.Order.desc("createDate"))); } //최신순
 
+
+            //없으면 null 즉시 반환
             if(greenRooms.isEmpty()){return null;}
 
             Map<GreenRoom, List<Adornment>> adornments = adornmentRepository.findAdornmentByGreenRoom_UserAndItem_ItemType(user,ItemType.SHAPE).stream().collect(Collectors.groupingBy(Adornment::getGreenRoom));
-            Map<GreenRoom, List<Todo>> todos = todoRepository.findTodoByGreenRoom_User(user).stream().collect(Collectors.groupingBy(Todo::getGreenRoom));
+
+            //활성화된 주기만 가져오기
+            Map<GreenRoom, List<Todo>> todos = todoRepository.findTodoByGreenRoom_UserAndUseYn(user,true).stream().collect(Collectors.groupingBy(Todo::getGreenRoom));
 
             LocalDateTime today = LocalDate.now(ZoneId.of("Asia/Seoul")).atStartOfDay();
             Predicate<Todo> isToday = t->t.getNextTodoDate().toLocalDate().isEqual(today.toLocalDate());
             Predicate<Todo> isPassed = t->t.getNextTodoDate().toLocalDate().isBefore(today.toLocalDate());
 
 
+            //현재 키우고 있는 식물을 기준으로 todo와 shape(식물 형태) 반환
             for (GreenRoom greenRoom:greenRooms){
-                String shape = adornments.get(greenRoom).get(0).getItem().getItemName();
-                int todoNums = (int) todos.get(greenRoom).stream().filter(isToday.or(isPassed)).count();
-                Long plantId = greenRoom.getPlant()== null? null:greenRoom.getPlant().getPlantId();
-                String plantName = greenRoom.getPlant()==null?null:greenRoom.getPlant().getDistributionName();
-                result.add(new GreenRoomListDto(greenRoom.getGreenroomId(),plantId,plantName,greenRoom.getName(),shape,todoNums));
+                String shape = adornments.get(greenRoom)!=null? adornments.get(greenRoom).get(0).getItem().getItemName():null;
+
+                //활성화된 주기 ->  오늘 해야하거나 이미 지난 할 일의 개수
+                int todoNums = todos.get(greenRoom)!=null? (int) todos.get(greenRoom).stream().filter(isToday.or(isPassed)).count():0;
+                result.add(new GreenRoomListDto(GreenroomInfoDto.from(greenRoom),shape,todoNums));
             }
 
             return  result;
@@ -178,14 +199,15 @@ public class GreenroomService {
         public GreenroomResponseDto getSpecificGreenroomInfo(Long greenroomId) throws IllegalArgumentException{
             GreenRoom greenRoom = greenRoomRepository.findById(greenroomId).orElseThrow(()->new IllegalArgumentException("해당 greenroom 없음."));
             ArrayList<Adornment> adornments= adornmentRepository.findAdornmentByGreenRoom_GreenroomId(greenroomId);
-            ArrayList<Todo>todos=todoRepository.findTodoByGreenRoom_GreenroomId(greenroomId);
+            //활성화된 주기만 가져오기
+            ArrayList<Todo> todos=todoRepository.findTodoByGreenRoom_GreenroomIdAndUseYn(greenroomId,true);
 
             HashMap<String,String> items = new HashMap<>();
             items.put("shape",null);
             items.put("hair_accessory",null);
             items.put("glasses",null);
-            items.put("glass_accessory",null);
-            items.put("shelf_accessory",null);
+            items.put("background_window",null);
+            items.put("background_shelf",null);
 
             for(Adornment adornment:adornments){
                 items.put(String.valueOf(adornment.getItem().getItemType()).toLowerCase(),adornment.getItem().getItemName());

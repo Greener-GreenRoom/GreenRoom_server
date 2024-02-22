@@ -1,6 +1,7 @@
 package com.greenroom.server.api.domain.greenroom.service;
 
-import com.greenroom.server.api.domain.greenroom.dto.GradeUpResponseDto;
+import com.greenroom.server.api.domain.greenroom.dto.GradeUpDto;
+import com.greenroom.server.api.domain.greenroom.dto.GreenroomRegisterResponseDto;
 import com.greenroom.server.api.domain.greenroom.dto.TodoCreationDto;
 import com.greenroom.server.api.domain.greenroom.entity.*;
 import com.greenroom.server.api.domain.greenroom.repository.ActivityRepository;
@@ -36,13 +37,13 @@ public class TodoService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public GradeUpResponseDto completeTodo(Long greenroomId, ArrayList<Long> activityList, String userEmail) throws UsernameNotFoundException{
+    public GradeUpDto completeTodo(Long greenroomId, ArrayList<Long> activityList, String userEmail) throws UsernameNotFoundException{
 
         ArrayList<Todo> todoList = todoRepository.findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(greenroomId,activityList);
 
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음."));
 
-        LocalDateTime today = LocalDate.now(ZoneId.of("Asia/Seoul")).atStartOfDay();
+        LocalDateTime today = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         for(Todo todo : todoList){
 
@@ -61,12 +62,11 @@ public class TodoService {
         user.updateWeeklySeed(activityNum*3);
 
         Grade beforeGrade = user.getGrade();
-
         //level 조정
         applicationEventPublisher.publishEvent(user);
         Grade afterGrade = user.getGrade();
 
-        return new GradeUpResponseDto(greenroomId,user.getGrade().getLevel(),activityNum*3,!beforeGrade.equals(afterGrade));
+        return new GradeUpDto(user.getGrade().getLevel(),activityNum*3,!beforeGrade.equals(afterGrade));
     }
 
     public void createTodo(TodoCreationDto todoCreationDto){

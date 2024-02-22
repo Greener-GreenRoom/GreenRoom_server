@@ -9,13 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class GreenRoomListDto {
-    private Long greenroomId;
-    private Long plantId;
-    private String plantName;
-    private String name;
+    private GreenroomInfoDto greenroomInfo;
     private String shape;
     private int todoNum;
-
 
 
 }

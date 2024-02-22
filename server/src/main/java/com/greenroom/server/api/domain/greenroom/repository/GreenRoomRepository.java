@@ -13,8 +13,9 @@ import java.util.Collection;
 
 @Repository
 public interface GreenRoomRepository extends JpaRepository<GreenRoom,Long> {
+
    @EntityGraph(attributePaths = {"plant"})
-   ArrayList<GreenRoom> findGreenRoomByUser(User user,Sort sort);
+   ArrayList<GreenRoom> findGreenRoomByUserAndStatus(User user, GreenRoomStatus status,Sort sort);
 
    @EntityGraph(attributePaths = {"plant"})
    ArrayList<GreenRoom> findGreenRoomByUserAndStatusIn(User user, ArrayList<GreenRoomStatus> status,Sort sort);

@@ -32,7 +32,7 @@ public class GardeningDataUtil {
     public Map<String, ArrayList<String>> plantList() {
         log.info("식물 list 받아오는 중");
         Map<String,ArrayList<String>> plantBasic = new HashMap<String,ArrayList<String>>();
-        for (int num=1;num<2;num++) {
+        for (int num=1;num<21;num++) {
 
             String baseURL = "http://api.nongsaro.go.kr/service/garden/gardenList?apiKey="+apiKey+"&pageNo="+Integer.toString(num);
             String listResult = webClient.get().uri(baseURL)
@@ -215,8 +215,8 @@ public class GardeningDataUtil {
             String flowerinformation = "";
             String baseinformation = name+"는(은) "+type+" 식물입니다. 높이는 "+height+"cm까지 자라며, "+ place+"에서 키우는 것이 가장 적합합니다. ";
             if (!leafColor.isEmpty()) {leafinformation = "잎은 "+ leafColor;}
-            if (!flowerColor.isEmpty()) {flowerinformation = "이며 " +flowerColor+"의 꽃이 핍니다. "; }
-            else {flowerinformation ="입니다. ";}
+            if (!flowerColor.isEmpty()) {flowerinformation = "이며 " +flowerColor+"의 꽃이 핍니다."; }
+            else {flowerinformation ="입니다.";}
 
             String otherInformation = baseinformation + leafinformation+flowerinformation;
 
@@ -304,6 +304,7 @@ public class GardeningDataUtil {
             obj.put("otherInformation", otherInformation);
             obj.put("waterCycle",watercycle);
             obj.put("plantCount",0);
+            obj.put("plantCategory",type);
 
             objList.put(obj);}
         return objList;

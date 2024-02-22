@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,11 +33,10 @@ public class PlantService {
 
     @Transactional(readOnly = true)
     public List<PlantInformationDto> getPopularPlantList(int offset){
-        PageRequest pageable = PageRequest.of(0,offset, Sort.by("plantCount").descending());
 
-        Page<Plant> pagePlantList =  plantRepository.findAll(pageable);
-
-        return pagePlantList.map(PlantInformationDto::from).toList();
+        ///많이 키우는 순서대로 받아온 뒤, 더미데이터가 아닌 것 중에 offset 만큼 가져오기
+        List<Plant> plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("plantCount")));
+        return  plantList.stream().filter(p-> !Objects.equals(p.getPlantCategory(), "dummy")).map(PlantInformationDto::from).toList().subList(0,offset);
 
     }
 
@@ -44,7 +44,8 @@ public class PlantService {
     public List<PlantInformationDto> getAllPlantList(){
         List<Plant> plants = plantRepository.findAll();
 
-        return plants.stream().map(PlantInformationDto::from).toList();
+        //더미데이터가 아닌것만 반환하기
+        return plants.stream().filter(p-> !Objects.equals(p.getPlantCategory(), "dummy")).map(PlantInformationDto::from).toList();
 
     }
 }
