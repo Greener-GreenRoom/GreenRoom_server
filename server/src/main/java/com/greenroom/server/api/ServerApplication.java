@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @RequiredArgsConstructor
 public class ServerApplication {
-	private final UserRepository userRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
