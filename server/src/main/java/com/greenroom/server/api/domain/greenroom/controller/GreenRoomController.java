@@ -1,10 +1,7 @@
 package com.greenroom.server.api.domain.greenroom.controller;
 
-import com.greenroom.server.api.domain.greenroom.dto.GreenRoomListDto;
-import com.greenroom.server.api.domain.greenroom.dto.GreenroomRegistrationDto;
-import com.greenroom.server.api.domain.greenroom.dto.GreenroomResponseDto;
+import com.greenroom.server.api.domain.greenroom.dto.*;
 import com.greenroom.server.api.domain.greenroom.service.GreenroomService;
-import com.greenroom.server.api.enums.ResponseCodeEnum;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @RestController
 @Slf4j
@@ -29,27 +25,25 @@ public class GreenRoomController {
 
         String userEmail = userDetails.getUsername();
 
-        Long greenroomId = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
-        HashMap<String,Object> result = new HashMap<String,Object>();
-        result.put("greenroom_id",greenroomId);
+        GreenroomRegisterResponseDto result = greenroomService.registerGreenRoom(greenroomRegistrationDto,userEmail,imgFile);
 
         return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     @GetMapping("/greenroom")
-    public ResponseEntity<ApiResponse> getAllGreenroomInfo(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<ApiResponse> getAllGreenroomInfo(@AuthenticationPrincipal UserDetails userDetails,@RequestParam(value = "sort",defaultValue ="desc") String sort, @RequestParam(value = "range", defaultValue ="all") String range){
         String userEmail = userDetails.getUsername();
 
-        ArrayList<GreenroomResponseDto> greenroomResponseDtos = greenroomService.getAllGreenroomInfo(userEmail);
+        GreenroomResponseDtoWithUser greenroomResponseDtoWithUser = greenroomService.getAllGreenroomInfo(userEmail,sort,range);
 
-        return ResponseEntity.ok(ApiResponse.success(greenroomResponseDtos));
+        return ResponseEntity.ok(ApiResponse.success(greenroomResponseDtoWithUser));
     }
 
     @GetMapping("/greenroom-list")
-    public ResponseEntity<ApiResponse> getGreenroomList(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<ApiResponse> getGreenroomList(@AuthenticationPrincipal UserDetails userDetails,@RequestParam(value = "sort")String sort){
         String userEmail = userDetails.getUsername();
 
-        ArrayList<GreenRoomListDto> greenRoomListDtos = greenroomService.getGreenroomList(userEmail);
+        ArrayList<GreenRoomListDto> greenRoomListDtos = greenroomService.getGreenroomList(userEmail,sort);
 
         return ResponseEntity.ok(ApiResponse.success(greenRoomListDtos));
 

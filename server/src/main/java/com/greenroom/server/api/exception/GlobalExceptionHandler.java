@@ -32,4 +32,7 @@ public class GlobalExceptionHandler {
         log.error("{}", e.getStackTrace()[0]);
         return ApiResponse.failed(FAILED).message(e.getMessage());
     }
+
+
+
 }

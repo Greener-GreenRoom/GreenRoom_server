@@ -38,11 +38,9 @@ public class Plant extends BaseTime {
 
     private String otherInformation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_category_id")
-    private PlantCategory plantCategory;
+    private String plantCategory;
     @Builder
-    public Plant(String plantAlias, String distributionName, String plantPictureUrl, int plantCount, String waterCycle, String lightDemand, String growthTemperature, String humidity, String fertilizer, String manageLevel, String otherInformation,PlantCategory plantCategory) {
+    public Plant(String plantAlias, String distributionName, String plantPictureUrl, int plantCount, String waterCycle, String lightDemand, String growthTemperature, String humidity, String fertilizer, String manageLevel, String otherInformation,String plantCategory) {
         this.plantAlias = plantAlias;
         this.distributionName = distributionName;
         this.plantPictureUrl = plantPictureUrl;

@@ -19,7 +19,7 @@ import static com.greenroom.server.api.enums.ResponseCodeEnum.FAIL_DATA_PARSE;
 @RestControllerAdvice
 public class GreenroomExceptionHandler {
 
-    @ExceptionHandler({RuntimeException.class, UsernameNotFoundException.class, IOException.class})
+    @ExceptionHandler({UsernameNotFoundException.class, IOException.class,IllegalArgumentException.class})
     public ApiResponse RuntimeException(Exception e) {
         log.error("{} : {}", e.getClass(), e.getMessage());
         log.error("{}", e.getStackTrace()[0]);

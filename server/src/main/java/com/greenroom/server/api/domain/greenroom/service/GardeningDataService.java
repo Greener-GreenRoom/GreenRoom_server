@@ -19,11 +19,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Transactional
 public class GardeningDataService {
     private final GardeningDataUtil gardeningDataUtil;
     private final PlantRepository plantRepository;
 
-    @Transactional
     public void insertPlant() throws JsonProcessingException {
 
         Map<String, ArrayList<String>> plantList = gardeningDataUtil.plantList();
@@ -37,7 +37,6 @@ public class GardeningDataService {
         }
     }
 
-    @Transactional
     public void deleteData(){
         plantRepository.deleteAllInBatch();
     }

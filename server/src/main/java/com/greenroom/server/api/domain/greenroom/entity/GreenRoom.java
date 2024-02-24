@@ -35,11 +35,11 @@ public class GreenRoom extends BaseTime {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_id",nullable = false,updatable = false)
+    @JoinColumn(name = "plant_id")
     private Plant plant;
 
     @Builder
-    public GreenRoom(String name, String pictureUrl,Boolean isVisible, GreenRoomStatus status, User user, Plant plant) {
+    public GreenRoom(String name, String pictureUrl,User user, Plant plant) {
         this.name = name;
         this.pictureUrl = pictureUrl;
         this.isVisible = Boolean.TRUE;

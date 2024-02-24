@@ -21,7 +21,13 @@ public interface TodoRepository extends JpaRepository<Todo,Long> {
     ArrayList<Todo> findTodoByGreenRoom_User(User greenroomUser);
 
     @EntityGraph(attributePaths = {"activity"})
+    ArrayList<Todo> findTodoByGreenRoom_UserAndUseYn(User greenRoom_user, Boolean useYn);
+
+    @EntityGraph(attributePaths = {"activity"})
     ArrayList<Todo> findTodoByGreenRoom_GreenroomId(Long greenroomId);
 
-    ArrayList<Todo> findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(Long greenroomId, Collection<Long> activityIdList);
+    @EntityGraph(attributePaths = {"activity"})
+    ArrayList<Todo> findTodoByGreenRoom_GreenroomIdAndUseYn(Long greenRoom_greenroomId, Boolean useYn);
+
+    ArrayList<Todo> findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(Long greenroomId, ArrayList<Long> activityIdList);
 }

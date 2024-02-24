@@ -215,8 +215,8 @@ public class GardeningDataUtil {
             String flowerinformation = "";
             String baseinformation = name+"는(은) "+type+" 식물입니다. 높이는 "+height+"cm까지 자라며, "+ place+"에서 키우는 것이 가장 적합합니다. ";
             if (!leafColor.isEmpty()) {leafinformation = "잎은 "+ leafColor;}
-            if (!flowerColor.isEmpty()) {flowerinformation = "이며 " +flowerColor+"의 꽃이 핍니다. "; }
-            else {flowerinformation ="입니다. ";}
+            if (!flowerColor.isEmpty()) {flowerinformation = "이며 " +flowerColor+"의 꽃이 핍니다."; }
+            else {flowerinformation ="입니다.";}
 
             String otherInformation = baseinformation + leafinformation+flowerinformation;
 
@@ -304,6 +304,7 @@ public class GardeningDataUtil {
             obj.put("otherInformation", otherInformation);
             obj.put("waterCycle",watercycle);
             obj.put("plantCount",0);
+            obj.put("plantCategory",type);
 
             objList.put(obj);}
         return objList;

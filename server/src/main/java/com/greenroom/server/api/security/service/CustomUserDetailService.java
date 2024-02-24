@@ -79,6 +79,15 @@ public class CustomUserDetailService implements UserDetailsService {
             token = tokenProvider.updateRefreshToken(authentication,user.getAccessToken());
             user.setRefreshToken(token.getRefreshToken(),tokenProvider.extractExpiration(token.getRefreshToken()));
         }
+
+        else if(tokenProvider.isExpired(token.getAccessToken()) &&
+                tokenProvider.isExpired(token.getRefreshToken())){
+            // access token과 refresh 토큰이 모두 만료 되어 다시 로그인 했을 경우
+            token = tokenProvider.createAllToken(authentication);
+            user.setRefreshToken(token.getRefreshToken(),tokenProvider.extractExpiration(token.getRefreshToken()));
+            user.setAccessToken(token.getAccessToken(),tokenProvider.extractExpiration(token.getAccessToken()));
+        }
+
         return token;
     }
 
