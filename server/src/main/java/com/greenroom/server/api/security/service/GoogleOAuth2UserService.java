@@ -1,16 +1,12 @@
 package com.greenroom.server.api.security.service;
 
 
-import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
-import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import com.greenroom.server.api.domain.user.entity.User;
-import com.greenroom.server.api.domain.user.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
+import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -20,17 +16,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GoogleOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final UserRepository userRepository;
-    private final GradeRepository gradeRepository;
-    private final HttpSession httpSession;
-    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailService userDetailService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -61,14 +53,6 @@ public class GoogleOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Transactional
     public User save(GoogleOAuthAttribute attribute){
-
-        Optional<User> findUser = userRepository.findByEmail(attribute.getEmail());
-
-        if(findUser.isPresent()){
-            return userRepository.save(findUser.get().updateUser(attribute));
-        }
-        User user = User.createUser(attribute,gradeRepository.findById(1L).orElse(null));
-        user.setDefaultPasswordOnOAuth2User(passwordEncoder.encode("password"));
-        return userRepository.save(user);
+        return userDetailService.save(attribute.toUserDto());
     }
 }

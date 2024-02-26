@@ -74,28 +74,17 @@ public class User extends BaseTime {
     public static User createUser(UserDto userDto,Grade grade){
         return User.builder()
                 .name(userDto.getName())
-                .password(userDto.getPassword())
                 .email(userDto.getEmail())
                 .grade(grade)
                 .role(Role.GENERAL)
                 .build();
     }
-    public static User createUser(GoogleOAuthAttribute attribute,Grade grade){
-        return User.builder()
-                .name(attribute.getName())
-                .email(attribute.getEmail())
-                .grade(grade)
-                .role(Role.GENERAL)
-                .build();
-    }
-
     public User setDefaultPasswordOnOAuth2User(String password){
         this.password = password;
         return this;
     }
-
-    public User updateUser(GoogleOAuthAttribute attribute){
-        this.name = attribute.getName();
+    public User updateUserName(String name){
+        this.name = name;
         return this;
     }
 
@@ -105,5 +94,7 @@ public class User extends BaseTime {
     public void updateWeeklySeed(int plusSeed){
         this.weeklySeed +=plusSeed;
     }
-    public void updateGrade(Grade grade) {this.grade = grade; }
+    public void updateGrade(Grade grade) {
+        this.grade = grade;
+    }
 }

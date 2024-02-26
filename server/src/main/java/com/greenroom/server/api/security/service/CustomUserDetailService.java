@@ -1,16 +1,16 @@
 package com.greenroom.server.api.security.service;
 
+import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
+import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.security.dto.TokenDto;
 import com.greenroom.server.api.security.util.TokenProvider;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +18,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.jwt.BadJwtException;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -33,6 +31,8 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final GradeRepository gradeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private static final Map<Role,List<GrantedAuthority>> authorityMap = new HashMap<>();
 
@@ -91,6 +91,20 @@ public class CustomUserDetailService implements UserDetailsService {
         return token;
     }
 
+    @Transactional
+    public User save(UserDto userDto){
+        // TODO : 2개 이상의 oauth 인 경우 이메일 도메인 앞 닉네임으로 중복 판별할 것. -> google 계정 이메일로 이미 가입했다면 kakao 가입 불가
+        Optional<User> findUser = userRepository.findByEmail(userDto.getEmail());
+
+        if(findUser.isPresent()){
+            return userRepository.save(findUser.get().updateUserName(userDto.getName()));
+        }
+
+        User user = User
+                .createUser(userDto,gradeRepository.findById(1L).orElse(null))
+                .setDefaultPasswordOnOAuth2User(passwordEncoder.encode("password"));
+        return userRepository.save(user);
+    }
 
     private static boolean isFirstAuthentication(User user) {
         return !StringUtils.hasText(user.getRefreshToken());

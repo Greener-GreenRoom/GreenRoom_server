@@ -1,5 +1,6 @@
 package com.greenroom.server.api.security.dto;
 
+import com.greenroom.server.api.domain.user.dto.UserDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,6 +33,13 @@ public class GoogleOAuthAttribute {
                 .email((String) attributes.get("email"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
+
+    public UserDto toUserDto(){
+        return UserDto.builder()
+                .name(this.name)
+                .email(this.email)
                 .build();
     }
 }
