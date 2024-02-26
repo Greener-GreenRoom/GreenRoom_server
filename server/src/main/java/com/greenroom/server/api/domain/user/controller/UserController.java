@@ -1,8 +1,7 @@
 package com.greenroom.server.api.domain.user.controller;
 
 import com.greenroom.server.api.domain.user.dto.UserDto;
-import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
-import com.greenroom.server.api.domain.user.service.UserService;
+import com.greenroom.server.api.security.service.CustomUserDetailService;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserService userService;
+    private final CustomUserDetailService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> signup(@RequestBody UserDto userDto){
-
-        ApiResponse response = ApiResponse.success();
-        try{
-            userService.signUp(userDto);
-        }catch (UserAlreadyExist e){
-            response = ApiResponse.failed(e.getResponseCodeEnum(),userDto.getEmail());
-        }
-        return ResponseEntity.ok(response);
+        userService.save(userDto);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     @GetMapping("/info")

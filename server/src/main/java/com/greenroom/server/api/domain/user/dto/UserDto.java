@@ -14,13 +14,11 @@ public class UserDto {
 
     private String name;
     private String email;
-    private String password;
 
     public static UserDto toDto(User user){
         return UserDto.builder()
                 .name(user.getName())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .build();
     }
 }

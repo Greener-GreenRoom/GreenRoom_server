@@ -1,5 +1,8 @@
-package com.greenroom.server.api.exception;
+package com.greenroom.server.api.domain.user.controller;
 
+import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
+import com.greenroom.server.api.exception.CustomException;
+import com.greenroom.server.api.exception.LoginException;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,10 +14,10 @@ import static com.greenroom.server.api.enums.ResponseCodeEnum.RESULT_NOT_FOUND;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class UserExceptionalHandler {
 
     @ExceptionHandler({
-            LoginException.class
+            UserAlreadyExist.class
     })
     public ApiResponse customException(CustomException e) {
         if (e.getResponseCodeEnum() != RESULT_NOT_FOUND) {
@@ -22,14 +25,5 @@ public class GlobalExceptionHandler {
             log.warn("{}", e.getStackTrace()[0]);
         }
         return ApiResponse.failed(e.getResponseCodeEnum()).message(e.getMessage());
-    }
-
-    @ExceptionHandler({
-            HttpMessageNotReadableException.class
-    })
-    public ApiResponse handlingException(Exception e) {
-        log.error("{} : {}", e.getClass(), e.getMessage());
-        log.error("{}", e.getStackTrace()[0]);
-        return ApiResponse.failed(FAILED).message(e.getMessage());
     }
 }
