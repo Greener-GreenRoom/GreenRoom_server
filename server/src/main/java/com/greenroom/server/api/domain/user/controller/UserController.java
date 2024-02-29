@@ -3,6 +3,9 @@ package com.greenroom.server.api.domain.user.controller;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.security.service.CustomUserDetailService;
 import com.greenroom.server.api.utils.ApiResponse;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +27,21 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success());
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<ApiResponse> deleteUser(@RequestBody UserDeleteDto userDeleteDto){
+        userService.deleteUser(userDeleteDto.getUserEmail());
+        return ResponseEntity.ok(ApiResponse.success());
+    }
+
     @GetMapping("/info")
     public ResponseEntity<ApiResponse> printMyInfo(@AuthenticationPrincipal User user){
         return ResponseEntity.ok(ApiResponse.success(user.getUsername()));
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserDeleteDto{
+        public String userEmail;
     }
 }
