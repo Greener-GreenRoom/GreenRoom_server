@@ -36,7 +36,10 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final TokenProvider tokenProvider;
     private static final String[] ANONYMOUS_MATCHERS = {
-            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error"
+            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error",
+
+            // 테스트용 메서드
+            "/api/user/delete"
     };
 //    private static final String[] STATIC_RESOURCES = {
 ////            "/h2-console/**"

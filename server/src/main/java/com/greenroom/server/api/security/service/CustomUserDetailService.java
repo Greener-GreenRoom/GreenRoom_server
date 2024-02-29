@@ -106,6 +106,15 @@ public class CustomUserDetailService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public void deleteUser(String userEmail){
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+
+        userRepository.deleteById(user.getUserId());
+    }
+
     private static boolean isFirstAuthentication(User user) {
         return !StringUtils.hasText(user.getRefreshToken());
     }
