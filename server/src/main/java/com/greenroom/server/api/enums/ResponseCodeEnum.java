@@ -12,7 +12,8 @@ public enum ResponseCodeEnum {
 
     RESULT_NOT_FOUND(-0x1001, "not found"),
     ALREADY_EXIST(-0x2001, "already exists"),
-    FAIL_DATA_PARSE(-0x3001, "fail data parsing")
+    FAIL_DATA_PARSE(-0x3001, "fail data parsing"),
+    INVALID_CREDENTIALS(-0x4001, "invalid credentials")
     ;
     private final int code;
 

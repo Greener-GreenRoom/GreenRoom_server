@@ -1,11 +1,7 @@
 package com.greenroom.server.api.domain.greenroom.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.greenroom.server.api.enums.ResponseCodeEnum;
-import com.greenroom.server.api.exception.CustomException;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
 
 import static com.greenroom.server.api.enums.ResponseCodeEnum.FAILED;
-import static com.greenroom.server.api.enums.ResponseCodeEnum.FAIL_DATA_PARSE;
 
 @Slf4j
 @RestControllerAdvice
