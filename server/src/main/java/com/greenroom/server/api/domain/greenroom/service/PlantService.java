@@ -1,10 +1,17 @@
 package com.greenroom.server.api.domain.greenroom.service;
 
+import com.greenroom.server.api.domain.greenroom.dto.PlantDetailInfoResponseDto;
 import com.greenroom.server.api.domain.greenroom.dto.PlantInformationDto;
+import com.greenroom.server.api.domain.greenroom.entity.GreenRoom;
 import com.greenroom.server.api.domain.greenroom.entity.Plant;
+import com.greenroom.server.api.domain.greenroom.enums.GreenRoomStatus;
+import com.greenroom.server.api.domain.greenroom.repository.GreenRoomRepository;
 import com.greenroom.server.api.domain.greenroom.repository.PlantRepository;
+import com.greenroom.server.api.domain.user.entity.User;
+import com.greenroom.server.api.domain.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +31,8 @@ import  org.springframework.data.domain.Page;
 @Transactional
 public class PlantService {
     private final PlantRepository plantRepository;
+    private final GreenRoomRepository greenRoomRepository;
+    private final UserRepository userRepository;
     @Transactional(readOnly = true)
     public String getWateringTip(Long id) throws IllegalArgumentException {
         Optional<Plant> optionalPlant = plantRepository.findById(id);
@@ -32,20 +41,41 @@ public class PlantService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlantInformationDto> getPopularPlantList(int offset){
+    public List<PlantInformationDto> getPlantList(Integer offset,String sort){
 
-        ///많이 키우는 순서대로 받아온 뒤, 더미데이터가 아닌 것 중에 offset 만큼 가져오기
-        List<Plant> plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("plantCount")));
+        List<Plant> plantList ;
+
+        //많이 키우는 순으로 가져오기
+        if(Objects.equals(sort, "popular")){
+            plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("plantCount")));
+        }
+        //최신 등록 순으로 가져오기
+        else if(Objects.equals(sort, "recent")){
+            plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("createDate")));
+        }
+        //조건 없음
+        else{
+           plantList = plantRepository.findAll();
+        }
+
+        if(offset==null){
+
+            //더미 데이터 제외하고 반환
+            return  plantList.stream().filter(p-> !Objects.equals(p.getPlantCategory(), "dummy")).map(PlantInformationDto::from).toList();
+        }
+
+        if(plantList.isEmpty()){
+            return null;
+        }
+
+        offset = offset>plantList.size()?plantList.size():offset;
         return  plantList.stream().filter(p-> !Objects.equals(p.getPlantCategory(), "dummy")).map(PlantInformationDto::from).toList().subList(0,offset);
 
     }
 
     @Transactional(readOnly = true)
-    public List<PlantInformationDto> getAllPlantList(){
-        List<Plant> plants = plantRepository.findAll();
-
-        //더미데이터가 아닌것만 반환하기
-        return plants.stream().filter(p-> !Objects.equals(p.getPlantCategory(), "dummy")).map(PlantInformationDto::from).toList();
-
+    public PlantDetailInfoResponseDto getPlantInfo(Long plantId){
+        Plant plant = plantRepository.findById(plantId).orElseThrow(()->new IllegalArgumentException("해당 식물 없음."));
+        return PlantDetailInfoResponseDto.from(plant);
     }
 }

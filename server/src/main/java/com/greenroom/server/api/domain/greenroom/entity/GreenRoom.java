@@ -47,4 +47,16 @@ public class GreenRoom extends BaseTime {
         this.user = user;
         this.plant = plant;
     }
+
+    public void updateMemo(String memo){
+        this.memo = memo;
+    }
+
+    public void updateName(String name){this.name = name;}
+
+    public void updatePictureUrl(String pictureUrl) {this.pictureUrl = pictureUrl;}
+
+    public void updateStatus (GreenRoomStatus greenRoomStatus){this.status = greenRoomStatus;}
+
+    public void updatePlant(Plant plant){this.plant = plant;}
 }

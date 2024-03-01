@@ -1,4 +1,4 @@
-package com.greenroom.server.api.domain.greenroom.dto;
+package com.greenroom.server.api.domain.user.dto;
 
 import com.greenroom.server.api.domain.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -9,18 +9,18 @@ import java.time.temporal.ChronoUnit;
 
 @Getter
 @AllArgsConstructor
-public class UserDto {
+public class UserBaseInfoDto {
     private String userName;
     private Long userID;
     private String imgUrl;
     private Long period;
 
-    public static UserDto from(User user){
+    public static UserBaseInfoDto from(User user){
 
         LocalDateTime today = LocalDateTime.now();
         Long period = ChronoUnit.DAYS.between(user.getCreateDate(),today) +1;
 
-        return new UserDto( user.getName(),user.getUserId(),user.getProfileUrl(),period);
+        return new UserBaseInfoDto( user.getName(),user.getUserId(),user.getProfileUrl(),period);
     }
 }
 

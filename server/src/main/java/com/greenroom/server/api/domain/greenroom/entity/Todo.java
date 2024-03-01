@@ -6,7 +6,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Table(name = "todo")
@@ -37,8 +39,9 @@ public class Todo extends BaseTime {
     private Activity activity;
 
     @Builder
-    public Todo(LocalDateTime firstStartDate, Integer duration, Boolean useYn, GreenRoom greenRoom, Activity activity, LocalDateTime nextTodoDate) {
+    public Todo(LocalDateTime firstStartDate,LocalDateTime lastUpdateDate ,Integer duration, Boolean useYn, GreenRoom greenRoom, Activity activity, LocalDateTime nextTodoDate) {
         this.firstStartDate = firstStartDate;
+        this.lastUpdateDate = lastUpdateDate;
         this.duration = duration;
         this.useYn = Boolean.TRUE;
         this.greenRoom = greenRoom;
@@ -52,4 +55,6 @@ public class Todo extends BaseTime {
     public void updateNextTodoDate(LocalDateTime nextTodoDate){
         this.nextTodoDate = nextTodoDate;
     }
+    public void updateUseYn(Boolean useYn){this.useYn = useYn;}
+    public void updateDuration(Integer duration){this.duration=duration;}
 }

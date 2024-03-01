@@ -7,6 +7,8 @@ import com.greenroom.server.api.utils.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class PlantController {
     private final PlantService plantService;
 
-    @GetMapping("/plant/lists")
-    public ResponseEntity<ApiResponse> getPopularPlantList(@RequestParam(value = "offset" ,defaultValue = "8") int offset) {
-        return ResponseEntity.ok(ApiResponse.success(plantService.getPopularPlantList(offset)));
+    //모든 식물 받아오기
+    @GetMapping("/plants")
+    public ResponseEntity<ApiResponse> getPlantList(@RequestParam(value = "offset" ,required = false) Integer offset, @RequestParam(value = "sort",required = false)String sort) {
+        return ResponseEntity.ok(ApiResponse.success(plantService.getPlantList(offset,sort)));
     }
 
-    @GetMapping("/plant/{id}/watering-tip")
+    //식물 물주기 팁 받아오기
+    @GetMapping("/plants/{id}/watering-tip")
     public ResponseEntity<ApiResponse> getWateringTip(@PathVariable("id") Long id){
         ApiResponse response = ApiResponse.success();
 
@@ -29,9 +33,10 @@ public class PlantController {
        return ResponseEntity.ok(ApiResponse.success(watering_tip));
     }
 
-    @GetMapping("/plant")
-    public ResponseEntity<ApiResponse> getAllPlantList(){
-        return ResponseEntity.ok((ApiResponse.success(plantService.getAllPlantList())));
-    }
+    //특정 식물 상세 정보 받아오기
+    @GetMapping("/plants/{id}")
+    public ResponseEntity<ApiResponse> getPlantInfo(@PathVariable(value = "id")Long plantId){
+        return ResponseEntity.ok(ApiResponse.success(plantService.getPlantInfo(plantId)));
 
+    }
 }
