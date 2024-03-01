@@ -1,17 +1,16 @@
 package com.greenroom.server.api.domain.greenroom.dto;
 
+import com.greenroom.server.api.domain.user.dto.UserBaseInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class GreenroomResponseDtoWithUser {
-    private UserDto userInfo;
+public class GreenroomAllResponseDto {
+    private UserBaseInfoDto userInfo;
     private ArrayList<GreenroomResponseDto> greenroomTotalInfo;
 }

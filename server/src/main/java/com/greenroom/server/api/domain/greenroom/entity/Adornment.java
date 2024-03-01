@@ -30,5 +30,9 @@ public class Adornment extends BaseTime {
         this.item = item;
         this.greenRoom = greenRoom;
     }
+
+    public void updateItem(Item item){
+        this.item = item;
+    }
 }
 

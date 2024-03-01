@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,26 +17,17 @@ import java.util.Optional;
 @Getter
 @AllArgsConstructor
 public class GreenroomInfoDto {
-
+    private GreenroomBaseInfoDto greenroomBaseInfo;
     private PlantInformationDto plantInfo;
-    private Long greenroomId;
-    private String greenroomName;
-    private String imageUrl;
-    private int period;
-    private String memo;
+
 
     public static GreenroomInfoDto from(GreenRoom greenRoom){
 
-        LocalDateTime today = LocalDateTime.now();
-        long period = ChronoUnit.DAYS.between(greenRoom.getCreateDate(),today) +1;
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        long period = ChronoUnit.DAYS.between(greenRoom.getCreateDate().toLocalDate(),today) +1;
 
         PlantInformationDto plantInformationDto = PlantInformationDto.from(greenRoom.getPlant());
         return new GreenroomInfoDto(
-                plantInformationDto,
-                greenRoom.getGreenroomId(),
-                greenRoom.getName(),
-                greenRoom.getPictureUrl(),
-                (int) period,
-                greenRoom.getMemo());
+                GreenroomBaseInfoDto.from(greenRoom),plantInformationDto);
     }
 }

@@ -30,4 +30,8 @@ public class GreenroomImageUploader {
         log.info("cdnImagePath => {}",this.cdnImagePath);
         return s3ImageUploader.upload(multipartFile,this.imagePath,this.cdnImagePath);
     }
+
+    public void deleteGreenroomImage(String imgUrl){
+        s3ImageUploader.deleteImage(imgUrl);
+    }
 }

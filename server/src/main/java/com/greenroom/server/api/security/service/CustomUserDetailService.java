@@ -115,6 +115,12 @@ public class CustomUserDetailService implements UserDetailsService {
         userRepository.deleteById(user.getUserId());
     }
 
+
+    @Transactional
+    public Integer getUserLevel(String userEmail){
+        return userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음.")).getGrade().getLevel();
+    }
+
     private static boolean isFirstAuthentication(User user) {
         return !StringUtils.hasText(user.getRefreshToken());
     }

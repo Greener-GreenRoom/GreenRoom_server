@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Getter
@@ -12,7 +14,7 @@ import java.util.HashMap;
 @AllArgsConstructor
 public class GreenroomResponseDto {
     private GreenroomInfoDto greenroomInfo;
-    private HashMap<String,String> greenroomItem;
-    private HashMap<String, LocalDate> greenroomTodo;
+    private ArrayList<GreenroomItemDto> greenroomItem;
+    private ArrayList<GreenroomTodoDto> greenroomTodo;
 
 }

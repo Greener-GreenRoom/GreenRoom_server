@@ -3,14 +3,12 @@ package com.greenroom.server.api.domain.user.controller;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.security.service.CustomUserDetailService;
 import com.greenroom.server.api.utils.ApiResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -36,6 +34,11 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<ApiResponse> printMyInfo(@AuthenticationPrincipal User user){
         return ResponseEntity.ok(ApiResponse.success(user.getUsername()));
+    }
+
+    @GetMapping("/grade/level")
+    public ResponseEntity<ApiResponse> getUserLevel(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(ApiResponse.success(userService.getUserLevel(userDetails.getUsername())));
     }
 
     @Data

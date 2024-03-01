@@ -3,6 +3,7 @@ package com.greenroom.server.api.utils.ImageUploader;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +91,15 @@ public class S3ImageUploader {
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
+
+    // S3에서 파일 삭제
+    public void deleteImage(String fileUrl) {
+
+        String fileName = fileUrl.substring(this.cdnRoot.length());
+        log.info(fileName);
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    }
+
 
     // 로컬에 저장된 이미지 지우기
     private void removeNewFile(File targetFile) {
