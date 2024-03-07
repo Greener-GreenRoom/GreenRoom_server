@@ -41,11 +41,13 @@ aws:
       root: ENC(izKWxZvCX263qEp8ArXygKb9dATMuCLKpP2EI8b6hbC5AkPI9mEVBIj4YZ4F1OrGFh5A6pOQ7fS3Pri81+1Uwg==)
       plant: dev/plant
       greenroom: dev/greenroom
+      user: dev/user
   cdn:
     path:
       root: ENC(AQc+Iesr9GSHoV3uEGQwyy3u7bhmC1DH5VocoNOuL0qu0G5ouV0faPNt+1SOpgCQ)
       plant: dev/plant
       greenroom: dev/greenroom
+      user: dev/user
 temp:
   filePath: ../../src/main/resources/
 

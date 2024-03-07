@@ -2,6 +2,10 @@ package com.greenroom.server.api.domain.user.entity;
 
 import com.greenroom.server.api.domain.common.BaseTime;
 import com.greenroom.server.api.domain.greenroom.entity.Grade;
+import com.greenroom.server.api.domain.user.enums.AlarmConfirm;
+import com.greenroom.server.api.domain.user.enums.Provider;
+import com.greenroom.server.api.domain.user.enums.UserStatus;
+import com.greenroom.server.api.domain.user.enums.converter.ProviderConverter;
 import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.enums.Role;
@@ -47,8 +51,20 @@ public class User extends BaseTime {
     @JoinColumn(name = "grade_id")
     private Grade grade;
 
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = ProviderConverter.class)
+    private Provider provider;
+
+    @Enumerated(EnumType.STRING)
+    private AlarmConfirm alarmConfirm;
+
+    private String withdrawalReason;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     @Builder
-    public User(String name,String email,String password,String profileUrl,Grade grade,Role role) {
+    public User(String name,String email,String password,String profileUrl,Grade grade,Role role,Provider provider) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -57,6 +73,10 @@ public class User extends BaseTime {
         this.weeklySeed = 0;
         this.grade = grade;
         this.role = role;
+        this.provider = provider;
+        this.alarmConfirm = AlarmConfirm.Y;
+        this.status = UserStatus.IN_ACTION;
+        this.withdrawalReason = "";
     }
 
     public User setRefreshToken(String refreshToken,LocalDateTime refreshTokenExpirationTime){
@@ -75,8 +95,10 @@ public class User extends BaseTime {
         return User.builder()
                 .name(userDto.getName())
                 .email(userDto.getEmail())
+                .profileUrl(userDto.getProfileUrl())
                 .grade(grade)
                 .role(Role.GENERAL)
+                .provider(userDto.getProvider())
                 .build();
     }
     public User setDefaultPasswordOnOAuth2User(String password){
@@ -86,6 +108,16 @@ public class User extends BaseTime {
     public User updateUserName(String name){
         this.name = name;
         return this;
+    }
+
+    public User updateProfileUrl(String profileUrl){
+        this.profileUrl = profileUrl;
+        return this;
+    }
+
+    public void withdrawalUser(String withdrawalReason){
+        this.withdrawalReason = withdrawalReason;
+        this.status = UserStatus.DELETE_PENDING;
     }
 
     public void updateTotalSeed(int plusSeed){

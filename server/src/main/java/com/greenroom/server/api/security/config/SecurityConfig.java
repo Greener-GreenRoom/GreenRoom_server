@@ -39,7 +39,7 @@ public class SecurityConfig {
             "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error",
 
             // 테스트용 메서드
-            "/api/user/delete"
+            "/api/user/delete/pending"
     };
 //    private static final String[] STATIC_RESOURCES = {
 ////            "/h2-console/**"

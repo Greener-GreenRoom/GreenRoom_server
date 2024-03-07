@@ -1,8 +1,10 @@
 package com.greenroom.server.api.exception;
 
 import com.greenroom.server.api.utils.ApiResponse;
+import io.jsonwebtoken.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -25,7 +27,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            HttpMessageNotReadableException.class
+            HttpMediaTypeNotSupportedException.class,
+            HttpMessageNotReadableException.class,
+            IOException.class
     })
     public ApiResponse handlingException(Exception e) {
         log.error("{} : {}", e.getClass(), e.getMessage());

@@ -4,9 +4,11 @@ import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.enums.Role;
+import com.greenroom.server.api.domain.user.enums.UserStatus;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.security.dto.TokenDto;
 import com.greenroom.server.api.security.util.TokenProvider;
+import com.greenroom.server.api.utils.ImageUploader.UserProfileImageUploader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Slf4j
@@ -33,6 +37,7 @@ public class CustomUserDetailService implements UserDetailsService {
     private final TokenProvider tokenProvider;
     private final GradeRepository gradeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserProfileImageUploader userProfileImageUploader;
 
     private static final Map<Role,List<GrantedAuthority>> authorityMap = new HashMap<>();
 
@@ -107,12 +112,35 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUser(String userEmail){
-
+    public void deleteUser(String userEmail,String withdrawalReason){
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+        user.withdrawalUser(withdrawalReason);
+        userRepository.save(user);
+    }
 
-        userRepository.deleteById(user.getUserId());
+    @Transactional
+    public int deleteAllUserInDeletePending(){
+        return userRepository.deleteAllByStatus(UserStatus.DELETE_PENDING);
+    }
+
+    @Transactional
+    public User updateUser(UserDto.UpdateUserRequest userDto,String userEmail,MultipartFile imageFile) throws IOException {
+        User user = userRepository
+                .findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+
+        String profileUrl = user.getProfileUrl();
+
+        if(!imageFile.isEmpty()){
+            profileUrl = userProfileImageUploader.uploadUserProfileImage(imageFile);
+        }
+
+        return userRepository.save(
+                user
+                        .updateProfileUrl(profileUrl)
+                        .updateUserName(userDto.getName())
+        );
     }
 
 
