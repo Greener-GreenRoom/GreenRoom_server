@@ -12,8 +12,11 @@ public enum ResponseCodeEnum {
 
     RESULT_NOT_FOUND(-0x1001, "not found"),
     ALREADY_EXIST(-0x2001, "already exists"),
+    ALREADY_EXIST_OTHER_OAUTH(-0x2002,"already exists in other oauth2"),
+    ALL_TOKEN_WERE_EXPIRED(-0x2003,"all tokens were expired"),
+    TOKENS_NOT_FOUND(-0x2004,"there were no tokens"),
     FAIL_DATA_PARSE(-0x3001, "fail data parsing"),
-    INVALID_CREDENTIALS(-0x4001, "invalid credentials")
+    INVALID_CREDENTIALS(-0x4001, "invalid credentials"),
     ;
     private final int code;
 
