@@ -36,8 +36,7 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final TokenProvider tokenProvider;
     private static final String[] ANONYMOUS_MATCHERS = {
-            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/login/oauth2/code/google/**","/error",
-
+            "/", "/login/**", "/api/user/signup","/api/authenticate/**","/error",
             // 테스트용 메서드
             "/api/user/delete/pending"
     };
@@ -75,12 +74,12 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(new JWTFilter(tokenProvider),UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login((oauthConfig) ->
-                        oauthConfig.userInfoEndpoint((userInfoEndpointConfig) ->
-                                        userInfoEndpointConfig.userService(googleOAuth2UserService)
-                                )
-                                .successHandler(oAuth2AuthenticationSuccessHandler)
-                )
+//                .oauth2Login((oauthConfig) ->
+//                        oauthConfig.userInfoEndpoint((userInfoEndpointConfig) ->
+//                                        userInfoEndpointConfig.userService(googleOAuth2UserService)
+//                                )
+//                                .successHandler(oAuth2AuthenticationSuccessHandler)
+//                )
                 .build();
     }
     @Bean

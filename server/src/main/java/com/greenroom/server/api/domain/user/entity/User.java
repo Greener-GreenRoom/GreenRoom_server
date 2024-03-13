@@ -9,6 +9,7 @@ import com.greenroom.server.api.domain.user.enums.converter.ProviderConverter;
 import com.greenroom.server.api.security.dto.GoogleOAuthAttribute;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.enums.Role;
+import com.greenroom.server.api.security.dto.TokenDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -88,6 +89,14 @@ public class User extends BaseTime {
     public User setAccessToken(String accessToken,LocalDateTime accessTokenExpirationTime){
         this.accessToken = accessToken;
         this.accessTokenExpirationTime = accessTokenExpirationTime;
+        return this;
+    }
+
+    public User invalidateAllTokens(){
+        this.refreshToken = null;
+        this.accessToken = null;
+        this.refreshTokenExpirationTime = null;
+        this.accessTokenExpirationTime = null;
         return this;
     }
 

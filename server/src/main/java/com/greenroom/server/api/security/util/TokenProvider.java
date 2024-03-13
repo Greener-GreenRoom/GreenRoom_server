@@ -1,7 +1,6 @@
 package com.greenroom.server.api.security.util;
 
 import com.greenroom.server.api.security.dto.TokenDto;
-import com.nimbusds.jwt.JWT;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -31,7 +30,7 @@ public class TokenProvider implements InitializingBean {
     private final String SECRET_KEY;
     private static final String AUTHORITIES_KEY = "auth";
     private final long accessTokenValidityInMilliSeconds; // access token : 24h
-    private final long refreshTokenValidityInMilliSeconds; // refresh token : 7d
+    private final long refreshTokenValidityInMilliSeconds; // refresh token : 30d
     private Key key;
 
     public TokenProvider(
@@ -39,7 +38,7 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds){
         this.SECRET_KEY = secretKey;
         this.accessTokenValidityInMilliSeconds = tokenValidityInSeconds*1000;
-        this.refreshTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds*7;
+        this.refreshTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds*30;
     }
 
     @Override
@@ -60,9 +59,10 @@ public class TokenProvider implements InitializingBean {
 
     public boolean isExpired(String token){
         try{
-            return extractExpiration(token).isBefore(LocalDateTime.now());}
-        catch (ExpiredJwtException e) {
-            return true;}
+            return extractExpiration(token).isBefore(LocalDateTime.now());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     public TokenDto createAllToken(Authentication authentication) { // 토큰 생성
@@ -126,15 +126,15 @@ public class TokenProvider implements InitializingBean {
     private Date createTokenValidity(long milliseconds){
         return new Date((new Date()).getTime() + milliseconds);
     }
-    public boolean isUpdatableRefreshToken(String token){
+    public boolean checkUpdatableRefreshToken(String refreshToken,LocalDateTime userRefreshTokenExpirationTime){
         try {
-            return LocalDateTime.now().plusDays(7).isBefore(extractExpiration(token));
-        }
-        catch (ExpiredJwtException e){
+            return LocalDateTime.now().plusDays(7).isAfter(extractExpiration(refreshToken)) &&
+                    extractExpiration(refreshToken).isEqual(userRefreshTokenExpirationTime);
+        } catch (ExpiredJwtException e){
             return false;
         }
-
     }
+
     public Authentication getAuthentication(String token) {
         Claims claims = Jwts
                 .parserBuilder()
@@ -148,7 +148,7 @@ public class TokenProvider implements InitializingBean {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        User principal = new User(claims.getSubject(), "password", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }

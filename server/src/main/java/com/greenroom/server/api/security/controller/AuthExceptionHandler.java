@@ -1,6 +1,10 @@
 package com.greenroom.server.api.security.controller;
 
 import com.greenroom.server.api.enums.ResponseCodeEnum;
+import com.greenroom.server.api.exception.CustomException;
+import com.greenroom.server.api.security.exception.AllTokenExpiredException;
+import com.greenroom.server.api.security.exception.NotFoundTokens;
+import com.greenroom.server.api.security.exception.OtherOAuth2Exception;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,5 +36,14 @@ public class AuthExceptionHandler {
         log.warn("{}", e.getStackTrace()[0]);
 
         return ApiResponse.failed(ResponseCodeEnum.RESULT_NOT_FOUND).message("해당 유저가 존재 하지 않습니다.");
+    }
+
+    @ExceptionHandler({
+            OtherOAuth2Exception.class,
+            AllTokenExpiredException.class,
+            NotFoundTokens.class
+    })
+    public ApiResponse authExceptionResponse(CustomException e) {
+        return ApiResponse.failed(e.getResponseCodeEnum()).message(e.getMessage());
     }
 }
