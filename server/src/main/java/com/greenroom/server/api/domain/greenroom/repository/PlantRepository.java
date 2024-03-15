@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface PlantRepository extends JpaRepository<Plant,Long> {
     Optional<Plant> findByPlantCategory(String plantCategory);
+
+    Optional<Plant> findByDistributionName(String distributionName);
 }

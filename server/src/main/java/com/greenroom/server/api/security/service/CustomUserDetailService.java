@@ -60,6 +60,11 @@ public class CustomUserDetailService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),authorityMap.get(user.getRole()));
     }
 
+    public User getUser(final String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+    }
+
     /**
      * token 상태 업데이트
      */

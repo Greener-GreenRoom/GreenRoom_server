@@ -41,12 +41,14 @@ aws:
       plant: local/plant
       greenroom : local/greenroom
       user: local/user
+      suggestion: local/suggestion
   cdn:
     path:
       root: ENC(NgfDokmmEgolrf20QtVSqni1n5nGJhaP5G6h9/MogrFiDTSXfcbf2PSc1e99DAti)
       plant: local/plant
       greenroom : local/greenroom
       user: local/user
+      suggestion: local/suggestion
 
 temp:
   filePath: src/main/resources/
