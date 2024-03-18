@@ -21,16 +21,14 @@ public interface TodoRepository extends JpaRepository<Todo,Long> {
 
     @EntityGraph(attributePaths = {"activity"})
     ArrayList<Todo> findTodoByGreenRoom_UserAndUseYn(User greenRoom_user, Boolean useYn);
-
-    ArrayList<Todo> findTodoByGreenRoom_User(User greenRoom_user);
-
     @EntityGraph(attributePaths = {"activity"})
     ArrayList<Todo> findTodoByGreenRoom_GreenroomIdAndUseYn(Long greenRoom_greenroomId, Boolean useYn);
 
-
     ArrayList<Todo> findAllByGreenRoom_GreenroomIdAndActivity_ActivityIdIn(Long greenroomId, ArrayList<Long> activityIdList);
 
-    Optional<Todo> findByGreenRoomGreenroomIdAndActivity_ActivityId(Long greenRoom_greenroomId, Long activity_activityId);
+    Optional<Todo> findByGreenRoomGreenroomIdAndActivity_ActivityId(Long greenroomId, Long activityId);
+
+    ArrayList<Todo> findAllByGreenRoom_GreenroomIdInAndActivity_ActivityIdIn(List<Long> greenRoomId, List<Long> activityId);
 
     @Modifying
     @Query("delete from Todo todo where todo.greenRoom.greenroomId = :greenroomId")

@@ -66,4 +66,9 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUserLevel(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(ApiResponse.success(userService.getUserLevel(userDetails.getUsername())));
     }
+
+    @GetMapping("/attendance")
+    public ResponseEntity<ApiResponse> checkAttendance(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(ApiResponse.success(userService.checkAttendance(userDetails.getUsername())));
+    }
 }

@@ -5,10 +5,7 @@ import com.greenroom.server.api.domain.greenroom.dto.GradeUpDto;
 import com.greenroom.server.api.domain.greenroom.dto.TodoModifyingRequestDto;
 import com.greenroom.server.api.domain.greenroom.service.TodoService;
 import com.greenroom.server.api.utils.ApiResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -53,6 +50,12 @@ public class TodoController{
 
         todoService.modifyTodoState(greenroomId,patchRequest);
         return ResponseEntity.ok(ApiResponse.success());
+    }
+
+    @GetMapping("/todo/{year}/{month}")
+    public ResponseEntity<ApiResponse> getTodoPerMonth(@AuthenticationPrincipal UserDetails userDetails,@PathVariable(value = "year")Integer year, @PathVariable(value = "month")Integer month,@RequestParam(value = "sort",required = false,defaultValue = "asc")String sort, @RequestParam(value = "target",required = false)Long greenroomId,@RequestParam(value = "type",required = false)Long activityId){
+
+        return ResponseEntity.ok(ApiResponse.success(todoService.getTodoPerMonth(userDetails.getUsername(), year,month,sort,greenroomId,activityId)));
     }
 
     @Data

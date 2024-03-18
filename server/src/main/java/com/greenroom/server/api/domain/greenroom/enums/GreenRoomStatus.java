@@ -7,8 +7,8 @@ public enum GreenRoomStatus {
 
     ENABLED("활성화됨"),
     DISABLED("비활성화됨"),
-    OTHER("기타"),
-    ;
+    DELETED("삭제됨"),
+    OTHER("기타");
 
     private final String description;
 
