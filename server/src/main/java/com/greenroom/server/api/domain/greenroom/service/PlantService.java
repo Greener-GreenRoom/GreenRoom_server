@@ -49,10 +49,6 @@ public class PlantService {
         if(Objects.equals(sort, "popular")){
             plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("plantCount")));
         }
-        //최신 등록 순으로 가져오기
-        else if(Objects.equals(sort, "recent")){
-            plantList = plantRepository.findAll(Sort.by(Sort.Order.desc("createDate")));
-        }
         //조건 없음
         else{
            plantList = plantRepository.findAll();

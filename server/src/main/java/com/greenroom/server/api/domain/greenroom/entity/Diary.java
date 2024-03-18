@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Table(name = "diary")
 @Entity
 @Getter
@@ -22,12 +25,15 @@ public class Diary extends BaseTime {
 
     private String content;
 
+    private LocalDate date;
+
     @Builder
-    public Diary(String diaryPictureUrl, String title, String content, GreenRoom greenRoom) {
+    public Diary(String diaryPictureUrl, String title, String content, GreenRoom greenRoom,LocalDate date) {
         this.diaryPictureUrl = diaryPictureUrl;
         this.title = title;
         this.content = content;
         this.greenRoom = greenRoom;
+        this.date = date;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

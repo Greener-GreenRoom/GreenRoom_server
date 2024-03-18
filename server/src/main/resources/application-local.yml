@@ -41,15 +41,13 @@ aws:
       plant: local/plant
       greenroom : local/greenroom
       user: local/user
+      diary: local/diary
   cdn:
     path:
       root: ENC(NgfDokmmEgolrf20QtVSqni1n5nGJhaP5G6h9/MogrFiDTSXfcbf2PSc1e99DAti)
       plant: local/plant
       greenroom : local/greenroom
       user: local/user
-
-temp:
-  filePath: src/main/resources/
 
 logging.level:
   #  org.hibernate.SQL: debug

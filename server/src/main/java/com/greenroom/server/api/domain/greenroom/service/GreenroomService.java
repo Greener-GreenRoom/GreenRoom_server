@@ -4,6 +4,7 @@ import com.greenroom.server.api.domain.greenroom.dto.*;
 import com.greenroom.server.api.domain.greenroom.entity.*;
 import com.greenroom.server.api.domain.greenroom.enums.GreenRoomStatus;
 import com.greenroom.server.api.domain.greenroom.enums.ItemType;
+import com.greenroom.server.api.domain.greenroom.enums.LevelIncreasingCause;
 import com.greenroom.server.api.domain.greenroom.repository.*;
 import com.greenroom.server.api.domain.user.dto.UserBaseInfoDto;
 import com.greenroom.server.api.domain.user.entity.User;
@@ -92,8 +93,9 @@ public class GreenroomService {
         //꾸미기 아이템 등록 event 발생
         applicationEventPublisher.publishEvent(new OneAdornmentCreationDto(shape,savedGreenRoom));
 
+        HashMap<String,Integer> pointUp= new HashMap<>();
 
-        //처음 식물 등록했을 경우, +1점
+        //처음 식물 등록했을 경우 점수 +1점 ( 식물 모두 삭제했다 등록하는 경우는 점수 x)
         if(greenRoomRepository.findGreenRoomByUser(user).size()==1){
             greenRoom.getUser().updateWeeklySeed(1);
             greenRoom.getUser().updateTotalSeed(1);
@@ -103,9 +105,12 @@ public class GreenroomService {
             applicationEventPublisher.publishEvent(greenRoom.getUser());
             Grade afterGrade = user.getGrade();
 
-            return new GreenroomRegisterResponseDto(savedGreenRoom.getGreenroomId(),new GradeUpDto(user.getGrade().getLevel(),1,!beforeGrade.equals(afterGrade)));
+            pointUp.put(LevelIncreasingCause.FIRST_GREENROOM_REGISTRATION.toString().toLowerCase(),1);
+            return new GreenroomRegisterResponseDto(savedGreenRoom.getGreenroomId(),new GradeUpDto(user.getGrade().getLevel(),pointUp,!beforeGrade.equals(afterGrade)));
+
         }
-        return new GreenroomRegisterResponseDto(savedGreenRoom.getGreenroomId(),new GradeUpDto(user.getGrade().getLevel(),0,false));
+
+        return new GreenroomRegisterResponseDto(savedGreenRoom.getGreenroomId(),new GradeUpDto(user.getGrade().getLevel(),pointUp,false));
 
     }
 
@@ -274,7 +279,6 @@ public class GreenroomService {
         GreenRoom greenRoom = greenRoomRepository.findById(greenroomId).orElseThrow(()->new IllegalArgumentException("해당 그린룸 없음."));
 
 
-
         for(PatchRequestDto patchRequestDto: patchRequest){
             String object = patchRequestDto.getObject();
 
@@ -368,7 +372,7 @@ public class GreenroomService {
 
         //user가 현재 키우고 있는 식물 또는 키웠던 식물 중에 해당 이름을 가진 그린룸이 있는지 확인
         return !greenRoomRepository.findGreenRoomByNameAndUser(name,user).isEmpty();
-        //있으면 false 없으면 true 반환
+        //이름이 중복이면 true 반환, 중복이 아니면 false 반환
 
     }
 
@@ -378,17 +382,21 @@ public class GreenroomService {
         //2. story, todo,  adornment, diary, guestbook 삭제
         //3. greenroom 삭제
 
-        //storyLikeRepository.deleteStoryLikeByGreenroom(greenroomId);   추후 기능
+        //storyLikeRepository.deleteStoryLikeByGreenroom(greenroomId);  추후 기능
         //storyRepository.deleteStoryByGreenRoom(greenroomId); 추후 기능
         //guestbookRepository.deleteGuestbookByGreenRoom(greenroomId); 추후 기능
 
-        todoLogRepository.deleteTodoLogByGreenroom(greenroomId);
+//        todoLogRepository.deleteTodoLogByGreenroom(greenroomId);
+//        todoRepository.deleteTodoByGreenroom(greenroomId);
+//        adornmentRepository.deleteAdornmentByGreenRoom(greenroomId);
+//        diaryRepository.deleteDiaryByGreenRoom(greenroomId);
+//        greenRoomRepository.deleteById(greenroomId);
 
-        todoRepository.deleteTodoByGreenroom(greenroomId);
-        adornmentRepository.deleteAdornmentByGreenRoom(greenroomId);
-        diaryRepository.deleteDiaryByGreenRoom(greenroomId);
+        //삭제 대신 상태만 'deleted'로 변경
+        GreenRoom greenRoom =  greenRoomRepository.findById(greenroomId).orElseThrow(()->new IllegalArgumentException("해당 그린룸을 찾을 수 없음."));
+        greenRoom.updateStatus(GreenRoomStatus.DELETED);
 
-        greenRoomRepository.deleteById(greenroomId);
+
 
     }
 
