@@ -48,7 +48,9 @@ aws:
       plant: local/plant
       greenroom : local/greenroom
       user: local/user
-
+      diary: local/diary
+temp:
+  filePath: src/main/resources/
 logging.level:
   #  org.hibernate.SQL: debug
   org.hibernate.type: trace
