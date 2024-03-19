@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> withdrawalUser(@AuthenticationPrincipal User user,@RequestBody UserWithdrawalRequestDto dto){
-        userService.deleteUser(user.getUsername(),dto.getWithdrawalReason());
+    public ResponseEntity<ApiResponse> withdrawalUser(@AuthenticationPrincipal User user){
+        userService.deleteUser(user.getUsername());
         return ResponseEntity.ok(ApiResponse.success());
     }
 
