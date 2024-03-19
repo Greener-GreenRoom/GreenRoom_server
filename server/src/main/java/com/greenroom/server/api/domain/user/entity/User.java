@@ -12,6 +12,7 @@ import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.security.dto.TokenDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -110,6 +111,7 @@ public class User extends BaseTime {
                 .provider(userDto.getProvider())
                 .build();
     }
+
     public User setDefaultPasswordOnOAuth2User(String password){
         this.password = password;
         return this;
@@ -124,8 +126,7 @@ public class User extends BaseTime {
         return this;
     }
 
-    public void withdrawalUser(String withdrawalReason){
-        this.withdrawalReason = withdrawalReason;
+    public void withdrawalUser(){
         this.status = UserStatus.DELETE_PENDING;
     }
 

@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse> withdrawalUser(@AuthenticationPrincipal User user,@RequestBody UserWithdrawalRequestDto dto){
-        userService.deleteUser(user.getUsername(),dto.getWithdrawalReason());
+    public ResponseEntity<ApiResponse> withdrawalUser(@AuthenticationPrincipal User user){
+        userService.deleteUser(user.getUsername());
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -65,5 +65,10 @@ public class UserController {
     @GetMapping("/grade/level")
     public ResponseEntity<ApiResponse> getUserLevel(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(ApiResponse.success(userService.getUserLevel(userDetails.getUsername())));
+    }
+
+    @GetMapping("/attendance")
+    public ResponseEntity<ApiResponse> checkAttendance(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(ApiResponse.success(userService.checkAttendance(userDetails.getUsername())));
     }
 }

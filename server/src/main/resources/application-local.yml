@@ -42,6 +42,7 @@ aws:
       greenroom : local/greenroom
       user: local/user
       suggestion: local/suggestion
+      diary: local/diary
   cdn:
     path:
       root: ENC(NgfDokmmEgolrf20QtVSqni1n5nGJhaP5G6h9/MogrFiDTSXfcbf2PSc1e99DAti)
@@ -49,10 +50,10 @@ aws:
       greenroom : local/greenroom
       user: local/user
       suggestion: local/suggestion
+      diary: local/diary
 
 temp:
   filePath: src/main/resources/
-
 logging.level:
   #  org.hibernate.SQL: debug
   org.hibernate.type: trace

@@ -1,11 +1,17 @@
 package com.greenroom.server.api.security.service;
 
+import com.greenroom.server.api.domain.greenroom.dto.GradeUpDto;
+import com.greenroom.server.api.domain.greenroom.entity.Grade;
+import com.greenroom.server.api.domain.greenroom.entity.GreenRoom;
+import com.greenroom.server.api.domain.greenroom.enums.LevelIncreasingCause;
 import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
+import com.greenroom.server.api.domain.greenroom.repository.GreenRoomRepository;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.enums.Provider;
 import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.enums.UserStatus;
+import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import com.greenroom.server.api.enums.ResponseCodeEnum;
 import com.greenroom.server.api.security.dto.AuthorizeDto;
@@ -19,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,6 +51,9 @@ public class CustomUserDetailService implements UserDetailsService {
     private final GradeRepository gradeRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserProfileImageUploader userProfileImageUploader;
+    private final GreenRoomRepository greenRoomRepository;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private static final Map<Role,List<GrantedAuthority>> authorityMap = new HashMap<>();
 
@@ -138,11 +148,18 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Transactional
     public User save(UserDto userDto){
-        // TODO : 2개 이상의 oauth 인 경우 이메일 도메인 앞 닉네임으로 중복 판별할 것. -> google 계정 이메일로 이미 가입했다면 kakao 가입 불가
+
         Optional<User> findUser = userRepository.findByEmail(userDto.getEmail());
 
         if(findUser.isPresent()){
-            return userRepository.save(findUser.get().updateUserName(userDto.getName()));
+
+            User existUser = findUser.get();
+
+            if(!existUser.getProvider().equals(userDto.getProvider())){
+                throw new OtherOAuth2Exception(ResponseCodeEnum.ALREADY_EXIST_OTHER_OAUTH);
+            }else{
+                throw new UserAlreadyExist(ResponseCodeEnum.ALREADY_EXIST);
+            }
         }
 
         User user = User
@@ -152,10 +169,10 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUser(String userEmail,String withdrawalReason){
+    public void deleteUser(String userEmail){
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
-        user.withdrawalUser(withdrawalReason);
+        user.withdrawalUser();
         userRepository.save(user);
     }
 
@@ -188,6 +205,38 @@ public class CustomUserDetailService implements UserDetailsService {
     public Integer getUserLevel(String userEmail){
         return userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음.")).getGrade().getLevel();
     }
+
+
+    @Transactional
+    public GradeUpDto checkAttendance(String userEmail){
+
+        User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음."));
+        ArrayList<GreenRoom> greenRooms = greenRoomRepository.findGreenRoomByUser(user);
+
+        ///식물 등록을 한 적 없는 경우
+        if(greenRooms.isEmpty()){
+            return new GradeUpDto(user.getGrade().getLevel(),new HashMap<>(),false);
+        }
+
+        //식물을 등록한 적 있는 경우
+        else{
+            user.updateTotalSeed(1);
+            user.updateWeeklySeed(1);
+
+            Grade beforeGrade = user.getGrade();
+
+            //level 조정
+            applicationEventPublisher.publishEvent(user);
+
+            Grade afterGrade = user.getGrade();
+            
+            HashMap<String,Integer> pointUp =  new HashMap<>();
+            pointUp.put(LevelIncreasingCause.ATTENDANCE.toString().toLowerCase(),1);
+
+            return new GradeUpDto(afterGrade.getLevel(),pointUp,beforeGrade!=afterGrade);
+        }
+    }
+
 
     @EventListener(ApplicationReadyEvent.class)
     public void setAuthoritiesMap(){
