@@ -1,5 +1,6 @@
 package com.greenroom.server.api.domain.user.controller;
 
+import com.greenroom.server.api.domain.user.exception.InvalidNameException;
 import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
 import com.greenroom.server.api.exception.CustomException;
 import com.greenroom.server.api.exception.LoginException;
@@ -19,7 +20,8 @@ public class UserExceptionalHandler {
 
     @ExceptionHandler({
             UserAlreadyExist.class,
-            OtherOAuth2Exception.class
+            OtherOAuth2Exception.class,
+            InvalidNameException.class
     })
     public ApiResponse signUpException(CustomException e) {
         return ApiResponse.failed(e.getResponseCodeEnum()).message(e.getMessage());

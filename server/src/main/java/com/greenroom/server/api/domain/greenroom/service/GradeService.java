@@ -5,9 +5,11 @@ import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
 import com.greenroom.server.api.domain.user.entity.User;
 import com.greenroom.server.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +31,23 @@ public class GradeService {
         }
     }
 
+    public Map<String, String> getAllGradeList(){
 
+        final Map<String, List<Grade>> map = gradeRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingInt(Grade::getLevel))
+                .collect(Collectors.groupingBy(Grade::getDescription));
+
+        Map<String,String> levelGroups = new TreeMap<>(Comparator.comparingInt(o -> map.get(o).get(0).getLevel()));
+
+        for (var en : map.entrySet()) {
+
+            levelGroups.put(en.getKey(),
+                    "${from} ~ ${to}"
+                    .replace("${from}",String.valueOf(en.getValue().get(0).getLevel()))
+                    .replace("${to}",String.valueOf(en.getValue().get(en.getValue().size()-1).getLevel()))
+            );
+        }
+        return levelGroups;
+    }
 }

@@ -42,4 +42,8 @@ public class ItemService {
 
         return new ItemListResponseDto(new ArrayList<>(List.of(Arrays.toString(ItemType.values()).toLowerCase())),itemListDtoArrayList);
     }
+
+    public List<Item> getItemsByGrade(Grade grade) {
+        return itemRepository.findAllByGrade(grade);
+    }
 }

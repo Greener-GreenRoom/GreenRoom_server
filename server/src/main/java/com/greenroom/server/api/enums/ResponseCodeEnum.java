@@ -17,6 +17,7 @@ public enum ResponseCodeEnum {
     TOKENS_NOT_FOUND(-0x2004,"there were no tokens"),
     FAIL_DATA_PARSE(-0x3001, "fail data parsing"),
     INVALID_CREDENTIALS(-0x4001, "invalid credentials"),
+    INVALID_FORMAT(-0x5001, "invalid format"),
     ;
     private final int code;
 
