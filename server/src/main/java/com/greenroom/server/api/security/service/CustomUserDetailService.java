@@ -1,14 +1,9 @@
 package com.greenroom.server.api.security.service;
 
-import com.greenroom.server.api.domain.greenroom.dto.GradeUpDto;
-import com.greenroom.server.api.domain.greenroom.entity.Grade;
-import com.greenroom.server.api.domain.greenroom.entity.GreenRoom;
-import com.greenroom.server.api.domain.greenroom.enums.LevelIncreasingCause;
+import com.greenroom.server.api.domain.alram.repository.AlarmRepository;
 import com.greenroom.server.api.domain.greenroom.repository.GradeRepository;
-import com.greenroom.server.api.domain.greenroom.repository.GreenRoomRepository;
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.entity.User;
-import com.greenroom.server.api.domain.user.enums.Provider;
 import com.greenroom.server.api.domain.user.enums.Role;
 import com.greenroom.server.api.domain.user.enums.UserStatus;
 import com.greenroom.server.api.domain.user.exception.UserAlreadyExist;
@@ -20,12 +15,10 @@ import com.greenroom.server.api.security.exception.AllTokenExpiredException;
 import com.greenroom.server.api.security.exception.NotFoundTokens;
 import com.greenroom.server.api.security.exception.OtherOAuth2Exception;
 import com.greenroom.server.api.security.util.TokenProvider;
-import com.greenroom.server.api.utils.ImageUploader.UserProfileImageUploader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,34 +29,29 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
+/**
+ * 순수 user 관련 생명 주기만 관리 하는 서비스
+ * (인증, 인가, 생성, 삭제)
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
+    private final AlarmRepository alarmRepository;
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final GradeRepository gradeRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserProfileImageUploader userProfileImageUploader;
-    private final GreenRoomRepository greenRoomRepository;
-
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     private static final Map<Role,List<GrantedAuthority>> authorityMap = new HashMap<>();
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
-
-        return getUserDetails(user);
+        return getUserDetails(findUserByEmail(email));
     }
 
     private UserDetails getUserDetails(User user){
@@ -73,12 +61,16 @@ public class CustomUserDetailService implements UserDetailsService {
     /**
      * token 상태 업데이트
      */
+    public User findUserByEmail(final String userEmail){
+        return userRepository
+                .findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+    }
+
     @Transactional
     public TokenDto setTokens(Authentication authentication, AuthorizeDto dto){
 
-        User user = userRepository
-                .findByEmail(authentication.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+        User user = findUserByEmail(authentication.getName());
         TokenDto token = null;
 
         if (dto.getProvider() != user.getProvider()) {
@@ -113,9 +105,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Transactional
     public TokenDto issueAllTokens(Authentication authentication){
 
-        User user = userRepository
-                .findByEmail(authentication.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+        User user = findUserByEmail(authentication.getName());
 
         TokenDto token = tokenProvider.createAllToken(authentication);
 
@@ -125,6 +115,14 @@ public class CustomUserDetailService implements UserDetailsService {
 
         userRepository.save(user);
         return token;
+    }
+
+    @Transactional
+    public void remoteAllTokens(UserDetails userDetails){
+
+        User user = findUserByEmail(userDetails.getUsername())
+                .invalidateAllTokens();
+        userRepository.save(user);
     }
 
     private boolean isUpdatableAccessTokenCond(String refreshToken,String accessToken,User user) {
@@ -158,15 +156,15 @@ public class CustomUserDetailService implements UserDetailsService {
         }
 
         User user = User
-                .createUser(userDto,gradeRepository.findById(1L).orElse(null))
+                .createUser(userDto,gradeRepository.findByLevel(0).orElse(null))
                 .setDefaultPasswordOnOAuth2User(passwordEncoder.encode("password"));
+        alarmRepository.save(user.getAlarm());
         return userRepository.save(user);
     }
 
     @Transactional
     public void deleteUser(String userEmail){
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
+        User user = findUserByEmail(userEmail);
         user.withdrawalUser();
         userRepository.save(user);
     }
@@ -175,63 +173,6 @@ public class CustomUserDetailService implements UserDetailsService {
     public int deleteAllUserInDeletePending(){
         return userRepository.deleteAllByStatus(UserStatus.DELETE_PENDING);
     }
-
-    @Transactional
-    public User updateUser(UserDto.UpdateUserRequest userDto,String userEmail,MultipartFile imageFile) throws IOException {
-        User user = userRepository
-                .findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 유저가 존재 하지 않습니다."));
-
-        String profileUrl = user.getProfileUrl();
-
-        if(!imageFile.isEmpty()){
-            profileUrl = userProfileImageUploader.uploadUserProfileImage(imageFile);
-        }
-
-        return userRepository.save(
-                user
-                        .updateProfileUrl(profileUrl)
-                        .updateUserName(userDto.getName())
-        );
-    }
-
-
-    @Transactional
-    public Integer getUserLevel(String userEmail){
-        return userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음.")).getGrade().getLevel();
-    }
-
-
-    @Transactional
-    public GradeUpDto checkAttendance(String userEmail){
-
-        User user = userRepository.findByEmail(userEmail).orElseThrow(()->new UsernameNotFoundException("해당 user를 찾을 수 없음."));
-        ArrayList<GreenRoom> greenRooms = greenRoomRepository.findGreenRoomByUser(user);
-
-        ///식물 등록을 한 적 없는 경우
-        if(greenRooms.isEmpty()){
-            return new GradeUpDto(user.getGrade().getLevel(),new HashMap<>(),false);
-        }
-
-        //식물을 등록한 적 있는 경우
-        else{
-            user.updateTotalSeed(1);
-            user.updateWeeklySeed(1);
-
-            Grade beforeGrade = user.getGrade();
-
-            //level 조정
-            applicationEventPublisher.publishEvent(user);
-
-            Grade afterGrade = user.getGrade();
-            
-            HashMap<String,Integer> pointUp =  new HashMap<>();
-            pointUp.put(LevelIncreasingCause.ATTENDANCE.toString().toLowerCase(),1);
-
-            return new GradeUpDto(afterGrade.getLevel(),pointUp,beforeGrade!=afterGrade);
-        }
-    }
-
 
     @EventListener(ApplicationReadyEvent.class)
     public void setAuthoritiesMap(){

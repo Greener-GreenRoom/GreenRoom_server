@@ -2,6 +2,7 @@ package com.greenroom.server.api.domain.user.controller;
 
 import com.greenroom.server.api.domain.user.dto.UserDto;
 import com.greenroom.server.api.domain.user.dto.UserWithdrawalRequestDto;
+import com.greenroom.server.api.domain.user.service.UserService;
 import com.greenroom.server.api.security.service.CustomUserDetailService;
 import com.greenroom.server.api.utils.ApiResponse;
 import lombok.*;
@@ -22,17 +23,18 @@ import java.io.IOException;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final CustomUserDetailService userService;
+    private final CustomUserDetailService userDetailService;
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> signup(@RequestBody UserDto userDto){
-        userService.save(userDto);
+        userDetailService.save(userDto);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse> withdrawalUser(@AuthenticationPrincipal User user){
-        userService.deleteUser(user.getUsername());
+        userDetailService.deleteUser(user.getUsername());
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -42,7 +44,7 @@ public class UserController {
      */
     @DeleteMapping("/delete/pending")
     public ResponseEntity<ApiResponse> deleteAllUserInPending(){
-        int deleteCount = userService.deleteAllUserInDeletePending();
+        int deleteCount = userDetailService.deleteAllUserInDeletePending();
         return ResponseEntity.ok(ApiResponse.success(deleteCount));
     }
 
@@ -71,4 +73,5 @@ public class UserController {
     public ResponseEntity<ApiResponse> checkAttendance(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(ApiResponse.success(userService.checkAttendance(userDetails.getUsername())));
     }
+
 }

@@ -1,5 +1,6 @@
 package com.greenroom.server.api.domain.user.entity;
 
+import com.greenroom.server.api.domain.alram.entity.Alarm;
 import com.greenroom.server.api.domain.common.BaseTime;
 import com.greenroom.server.api.domain.greenroom.entity.Grade;
 import com.greenroom.server.api.domain.user.enums.AlarmConfirm;
@@ -53,14 +54,12 @@ public class User extends BaseTime {
     @JoinColumn(name = "grade_id")
     private Grade grade;
 
+    @OneToOne(mappedBy = "user",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    private Alarm alarm;
+
     @Enumerated(EnumType.STRING)
     @Convert(converter = ProviderConverter.class)
     private Provider provider;
-
-    @Enumerated(EnumType.STRING)
-    private AlarmConfirm alarmConfirm;
-
-    private String withdrawalReason;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
@@ -76,9 +75,7 @@ public class User extends BaseTime {
         this.grade = grade;
         this.role = role;
         this.provider = provider;
-        this.alarmConfirm = AlarmConfirm.Y;
         this.status = UserStatus.IN_ACTION;
-        this.withdrawalReason = "";
     }
 
     public User setRefreshToken(String refreshToken,LocalDateTime refreshTokenExpirationTime){
@@ -102,6 +99,7 @@ public class User extends BaseTime {
     }
 
     public static User createUser(UserDto userDto,Grade grade){
+
         return User.builder()
                 .name(userDto.getName())
                 .email(userDto.getEmail())
@@ -109,7 +107,13 @@ public class User extends BaseTime {
                 .grade(grade)
                 .role(Role.GENERAL)
                 .provider(userDto.getProvider())
-                .build();
+                .build()
+                .setDefaultAlarm();
+    }
+
+    private User setDefaultAlarm(){
+        this.alarm = new Alarm(this);
+        return this;
     }
 
     public User setDefaultPasswordOnOAuth2User(String password){
