@@ -1,5 +1,6 @@
 package com.greenroom.server.api.domain.greenroom.entity;
 
+import com.greenroom.server.api.domain.common.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +9,7 @@ import lombok.*;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Grade {
+public class Grade extends BaseTime {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gradeId;

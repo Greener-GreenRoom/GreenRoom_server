@@ -28,17 +28,6 @@ public class AuthExceptionHandler {
     }
 
     @ExceptionHandler({
-            UsernameNotFoundException.class
-    })
-    public ApiResponse notFoundUser(UsernameNotFoundException e) {
-
-        log.warn("{} : {}", e.getClass(), e.getMessage());
-        log.warn("{}", e.getStackTrace()[0]);
-
-        return ApiResponse.failed(ResponseCodeEnum.RESULT_NOT_FOUND).message("해당 유저가 존재 하지 않습니다.");
-    }
-
-    @ExceptionHandler({
             OtherOAuth2Exception.class,
             AllTokenExpiredException.class,
             NotFoundTokens.class
